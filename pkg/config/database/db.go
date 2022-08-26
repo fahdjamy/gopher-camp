@@ -1,11 +1,9 @@
-package config
+package database
 
 import (
-	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"gopher-camp/pkg/constants"
-	"gopher-camp/pkg/services/env"
 	"log"
 )
 
@@ -15,16 +13,8 @@ var (
 
 func OpenConnection() {
 	//"host=localhost port= user= dbname= password=",
-	dbConn, err := gorm.Open(
-		"postgres",
-		fmt.Sprintf("host=%v port=%v user=%v dbname=%v password=%v",
-			env.GetEnv(constants.DbHost),
-			env.GetEnv(constants.DbPort),
-			env.GetEnv(constants.DbUser),
-			env.GetEnv(constants.DbName),
-			env.GetEnv(constants.DbPassword),
-		),
-	)
+
+	dbConn, err := gorm.Open("postgres", constants.DatabaseURI())
 	if err != nil {
 		log.Fatal(err)
 		return

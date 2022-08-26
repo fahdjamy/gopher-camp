@@ -14,8 +14,9 @@ func main() {
 	fileServer := http.FileServer(http.Dir("./static"))
 
 	r.Handle("/", fileServer)
+
 	routes.RegisterProjectRoutes(r)
-	http.Handle("/api/projects/", r)
+	//http.Handle("//projects/", r)
 
 	fmt.Printf("Starting server on port " + port + "\n")
 	log.Fatal(http.ListenAndServe(port, r))

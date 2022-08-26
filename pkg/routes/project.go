@@ -6,9 +6,9 @@ import (
 )
 
 var RegisterProjectRoutes = func(router *mux.Router) {
-	router.HandleFunc("/", controllers.GetProjects).Methods("GET")
-	router.HandleFunc("/", controllers.CreateProject).Methods("POST")
-	router.HandleFunc("/{projectId}", controllers.GetProject).Methods("GET")
-	router.HandleFunc("/{projectId}", controllers.UpdateProject).Methods("POST")
-	router.HandleFunc("/{projectId}", controllers.DeleteProjects).Methods("DELETE")
+	router.HandleFunc("/projects/", controllers.GetProjects).Methods("GET")
+	router.HandleFunc("/projects/", controllers.CreateProject).Methods("POST")
+	router.HandleFunc("/projects/{projectId}", controllers.GetProject).Methods("GET")
+	router.HandleFunc("/projects/{projectId}", controllers.UpdateProject).Methods("POST")
+	router.HandleFunc("/projects/{projectId}", controllers.DeleteProjects).Methods("DELETE")
 }

@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
-	"gopher-camp/pkg/config"
+	"gopher-camp/pkg/config/database"
 )
 
 var db *gorm.DB
@@ -16,8 +16,8 @@ type Project struct {
 }
 
 func init() {
-	config.OpenConnection()
-	db = config.GetDB()
+	database.OpenConnection()
+	db = database.GetDB()
 	db.AutoMigrate(&Project{})
 }
 
