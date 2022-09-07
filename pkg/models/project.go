@@ -3,44 +3,38 @@ package models
 import (
 	"github.com/jinzhu/gorm"
 	"gopher-camp/pkg/config/database"
+	"time"
 )
 
-var db *gorm.DB
-
 type Project struct {
-	gorm.Model
-	ID          string   `gorm:""json:"id"`
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Company     *Company `json:"company"`
+	ID          int       `gorm:"primaryKey" json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Company     *Company  `json:"company"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
-func init() {
-	database.OpenConnection()
-	db = database.GetDB()
-	db.AutoMigrate(&Project{})
-}
-
-func (p *Project) Create() *Project {
-	db.NewRecord(p)
-	db.Create(&p)
+func (p *Project) Create(db database.Database) *Project {
+	db.GetDB().NewRecord(p)
+	db.GetDB().Create(&p)
 	return p
 }
 
-func (p *Project) GetAll() []Project {
+func (p *Project) GetAll(db database.Database) []Project {
 	var projects []Project
-	db.Find(&projects)
+	db.GetDB().Find(&projects)
 	return projects
 }
 
-func (p *Project) FindById(id int64) (*Project, *gorm.DB) {
+func (p *Project) FindById(id int64, db database.Database) (*Project, *gorm.DB) {
 	var project Project
-	db.Where("ID=?", id).Find(&project)
-	return &project, db
+	db.GetDB().Where("ID=?", id).Find(&project)
+	return &project, db.GetDB()
 }
 
-func (p *Project) DeleteById(id int64) Project {
+func (p *Project) DeleteById(id int64, db database.Database) Project {
 	var project Project
-	db.Where("ID=?", id).Delete(project)
+	db.GetDB().Where("ID=?", id).Delete(project)
 	return project
 }

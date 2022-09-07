@@ -1,11 +1,14 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"time"
+)
 
 type Company struct {
-	gorm.Model
-	ID      string `gorm:""json:"id"`
-	Name    string `json:"name"`
-	Founder string `json:"founder"`
-	Website string `json:"website"`
+	ID        int       `gorm:"primaryKey" json:"id"`
+	Name      string    `json:"name"`
+	Founder   string    `json:"founder"`
+	Website   string    `json:"website"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }

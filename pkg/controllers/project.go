@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
+	"gopher-camp/pkg/config/database"
 	"gopher-camp/pkg/models"
 	"gopher-camp/pkg/utils"
 	"net/http"
@@ -11,8 +12,12 @@ import (
 
 var dbProject models.Project
 
-func GetProjects(w http.ResponseWriter, r *http.Request) {
-	projects := dbProject.GetAll()
+type ProjectController struct {
+	db database.Database
+}
+
+func (pc ProjectController) GetProjects(w http.ResponseWriter, r *http.Request) {
+	projects := dbProject.GetAll(pc.db)
 	res, _ := json.Marshal(projects)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -23,7 +28,7 @@ func GetProjects(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func DeleteProjects(w http.ResponseWriter, r *http.Request) {
+func (pc ProjectController) DeleteProjects(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	projectId := params["projectId"]
@@ -32,7 +37,7 @@ func DeleteProjects(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	project := dbProject.DeleteById(id)
+	project := dbProject.DeleteById(id, pc.db)
 	if project.Name == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -50,7 +55,7 @@ func DeleteProjects(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func UpdateProject(w http.ResponseWriter, r *http.Request) {
+func (pc ProjectController) UpdateProject(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	project := &models.Project{}
 	utils.ParseBody(r, project)
@@ -63,8 +68,9 @@ func UpdateProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	projectDetails, db := dbProject.FindById(id)
-	if projectDetails.ID == "" && projectDetails.ID != projectId {
+	projectDetails, db := dbProject.FindById(id, pc.db)
+	intVar, err := strconv.Atoi(projectId)
+	if projectDetails.ID != intVar {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -81,11 +87,11 @@ func UpdateProject(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func CreateProject(w http.ResponseWriter, r *http.Request) {
+func (pc ProjectController) CreateProject(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	project := &models.Project{}
 	utils.ParseBody(r, project)
-	savedProject := project.Create()
+	savedProject := project.Create(pc.db)
 	res, _ := json.Marshal(savedProject)
 	w.WriteHeader(http.StatusOK)
 	_, err := w.Write(res)
@@ -95,7 +101,7 @@ func CreateProject(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetProject(w http.ResponseWriter, r *http.Request) {
+func (pc ProjectController) GetProject(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	projectId := params["projectId"]
 	id, err := strconv.ParseInt(projectId, 0, 0)
@@ -105,7 +111,7 @@ func GetProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbProject, _ := dbProject.FindById(id)
+	dbProject, _ := dbProject.FindById(id, pc.db)
 	res, _ := json.Marshal(dbProject)
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write(res)
@@ -113,4 +119,8 @@ func GetProject(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadGateway)
 		return
 	}
+}
+
+func NewProjectController(db database.Database) ProjectController {
+	return ProjectController{db: db}
 }
