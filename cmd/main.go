@@ -7,6 +7,7 @@ import (
 	"gopher-camp/pkg/constants"
 	"gopher-camp/pkg/models"
 	"gopher-camp/pkg/routes"
+	"gopher-camp/pkg/services/storage"
 	"log"
 	"net/http"
 )
@@ -23,7 +24,8 @@ func main() {
 
 	r.Handle("/", fileServer)
 
-	routes.RegisterProjectRoutes(r, *db)
+	projectService := storage.NewProjectService(*db)
+	routes.RegisterProjectRoutes(r, projectService)
 
 	fmt.Printf("Starting server on port " + port + "\n")
 	log.Fatal(http.ListenAndServe(port, r))

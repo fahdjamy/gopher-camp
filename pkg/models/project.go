@@ -1,8 +1,8 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
 	"gopher-camp/pkg/config/database"
+	"gopher-camp/pkg/types"
 	"time"
 )
 
@@ -21,20 +21,28 @@ func (p *Project) Create(db database.Database) *Project {
 	return p
 }
 
-func (p *Project) GetAll(db database.Database) []Project {
+func (p *Project) FindAll(db database.Database) []Project {
 	var projects []Project
 	db.GetDB().Find(&projects)
 	return projects
 }
 
-func (p *Project) FindById(id int64, db database.Database) (*Project, *gorm.DB) {
+func (p *Project) FindById(id int64, db database.Database) *Project {
 	var project Project
 	db.GetDB().Where("ID=?", id).Find(&project)
-	return &project, db.GetDB()
+	return &project
 }
 
 func (p *Project) DeleteById(id int64, db database.Database) Project {
 	var project Project
 	db.GetDB().Where("ID=?", id).Delete(project)
+	return project
+}
+
+func NewProject() types.Domain[Project] {
+	return &Project{}
+}
+
+func ProjectToDomainProject(project *Project) types.Domain[Project] {
 	return project
 }
