@@ -30,6 +30,6 @@ func (l CustomLogger) LogError(err error, src string, pkg string) {
 	log.Println(logMsg)
 }
 
-func NewLogger() CustomLogger {
+func NewCustomLogger() CustomLogger {
 	return CustomLogger{}
 }

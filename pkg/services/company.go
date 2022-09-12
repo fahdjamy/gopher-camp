@@ -1,11 +1,13 @@
 package services
 
 import (
+	"errors"
+	"fmt"
 	"github.com/jinzhu/gorm"
 	"gopher-camp/pkg/config/database"
+	"gopher-camp/pkg/dto"
 	"gopher-camp/pkg/models"
 	"gopher-camp/pkg/types"
-	"gopher-camp/pkg/types/dto"
 )
 
 type CompanyService struct {
@@ -14,8 +16,9 @@ type CompanyService struct {
 }
 
 func (c CompanyService) FindAll() []models.Company {
-	//TODO implement me
-	panic("implement me")
+	var companies []models.Company
+	c.db.Find(&companies)
+	return companies
 }
 
 func (c CompanyService) Delete(id int) (bool, error) {
@@ -24,17 +27,21 @@ func (c CompanyService) Delete(id int) (bool, error) {
 }
 
 func (c CompanyService) FindById(id int) (*models.Company, error) {
+	company := &models.Company{}
+	rec := c.db.Where("id = ?", id).First(company)
 
+	if rec.RowsAffected == 0 {
+		return nil, errors.New(fmt.Sprintf("company with id (%v) does not exist", id))
+	}
+	return company, nil
+}
+
+func (c CompanyService) Create(model types.DTOMapper[models.Company, dto.ProjectDTO]) (*models.Company, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c CompanyService) Create(model dto.ToDomainMapper[models.Company]) (*models.Company, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c CompanyService) Update(id int, model dto.ToDomainMapper[models.Company]) (*models.Company, error) {
+func (c CompanyService) Update(id int, model types.DTOMapper[models.Company, dto.ProjectDTO]) (*models.Company, error) {
 	//TODO implement me
 	panic("implement me")
 }

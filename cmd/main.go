@@ -17,20 +17,20 @@ import (
 func main() {
 	r := mux.NewRouter()
 	port := constants.HostPort()
+	logger := utils.NewCustomLogger()
 
 	db := database.NewDatabase()
 	db.OpenConnection("postgres", constants.DatabaseURI())
 
 	models.MigrateAllModels(db)
-	logger := utils.NewLogger()
 
 	_ = helpers.SeedDatabaseData(db.GetDB(), logger)
 
 	fileServer := http.FileServer(http.Dir("./static"))
+	companyService := services.NewCompanyService(*db, logger)
+	projectService := services.NewProjectService(*db, logger, companyService)
 
 	r.Handle("/", fileServer)
-
-	projectService := services.NewProjectService(*db)
 	routes.RegisterProjectRoutes(r, projectService)
 
 	fmt.Printf("Starting server on port " + port + "\n")
