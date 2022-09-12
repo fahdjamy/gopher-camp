@@ -1,5 +1,5 @@
 package models
 
 type Model interface {
-	Project | Company
+	Project | Company | Founder
 }

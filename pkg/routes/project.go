@@ -4,7 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"gopher-camp/pkg/controllers"
 	"gopher-camp/pkg/models"
-	"gopher-camp/pkg/services/storage"
+	"gopher-camp/pkg/storage"
 )
 
 var RegisterProjectRoutes = func(router *mux.Router, service storage.Storage[models.Project]) {

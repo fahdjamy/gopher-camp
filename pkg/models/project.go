@@ -1,8 +1,7 @@
 package models
 
 import (
-	"gopher-camp/pkg/config/database"
-	"gopher-camp/pkg/types"
+	"fmt"
 	"time"
 )
 
@@ -15,34 +14,16 @@ type Project struct {
 	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
-func (p *Project) Create(db database.Database) *Project {
-	db.GetDB().NewRecord(p)
-	db.GetDB().Create(&p)
-	return p
+func (p Project) Me() string {
+	me := fmt.Sprintf("%v with id: %d", p.Name, p.ID)
+	return me
 }
 
-func (p *Project) FindAll(db database.Database) []Project {
-	var projects []Project
-	db.GetDB().Find(&projects)
-	return projects
+func (p Project) Validate() error {
+	//TODO: implement validation logic for model
+	return nil
 }
 
-func (p *Project) FindById(id int64, db database.Database) *Project {
-	var project Project
-	db.GetDB().Where("ID=?", id).Find(&project)
-	return &project
-}
-
-func (p *Project) DeleteById(id int64, db database.Database) Project {
-	var project Project
-	db.GetDB().Where("ID=?", id).Delete(project)
-	return project
-}
-
-func NewProject() types.Domain[Project] {
+func NewProject() *Project {
 	return &Project{}
-}
-
-func ProjectToDomainProject(project *Project) types.Domain[Project] {
-	return project
 }

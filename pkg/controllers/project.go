@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"gopher-camp/pkg/models"
-	"gopher-camp/pkg/services/storage"
+	"gopher-camp/pkg/storage"
+	"gopher-camp/pkg/types/dto"
+	"gopher-camp/pkg/utils"
 	"net/http"
 	"strconv"
 )
@@ -15,12 +17,12 @@ type ProjectController struct {
 
 func (pc ProjectController) GetProjects(w http.ResponseWriter, r *http.Request) {
 	projects := pc.service.FindAll()
-	res, _ := json.Marshal(projects)
+	res, _ := json.Marshal(utils.SuccessArrayResponse(projects, "success"))
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_, err := w.Write(res)
 	if err != nil {
-		w.WriteHeader(http.StatusBadGateway)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 }
@@ -62,16 +64,16 @@ func (pc ProjectController) UpdateProject(w http.ResponseWriter, r *http.Request
 
 func (pc ProjectController) CreateProject(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	//project := &models.Project{}
-	//utils.ParseBody(r, project)
-	//savedProject := project.Create(pc.db)
-	//res, _ := json.Marshal(savedProject)
+	projectDTO := &dto.ProjectDTO{}
+	utils.ParseBody(r, projectDTO)
+	project, _ := pc.service.Create(projectDTO)
+	res, _ := json.Marshal(project)
 	w.WriteHeader(http.StatusOK)
-	//_, err := w.Write(res)
-	//if err != nil {
-	//	return
-	//	w.WriteHeader(http.StatusBadGateway)
-	//}
+	_, err := w.Write(res)
+	if err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+		return
+	}
 }
 
 func (pc ProjectController) GetProject(w http.ResponseWriter, r *http.Request) {

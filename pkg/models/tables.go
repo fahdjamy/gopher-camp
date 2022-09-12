@@ -17,5 +17,5 @@ func MigrateCompany(database *database.Database) {
 
 func MigrateAllModels(database *database.Database) {
 	log.Println(".........Migrating all tables......")
-	database.GetDB().AutoMigrate(&Company{}, &Project{})
+	database.GetDB().AutoMigrate(&Founder{}, &Company{}, &Project{})
 }
