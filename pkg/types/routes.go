@@ -1,8 +1,8 @@
-package rest
+package types
 
 import "net/http"
 
-type Routers interface {
+type RestRouters interface {
 	Get(path string, handler http.Handler)
 	Put(path string, handler http.Handler)
 	Post(path string, handler http.Handler)
