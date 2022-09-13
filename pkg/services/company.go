@@ -36,12 +36,12 @@ func (c CompanyService) FindById(id int) (*models.Company, error) {
 	return company, nil
 }
 
-func (c CompanyService) Create(model types.DTOMapper[models.Company, dto.ProjectDTO]) (*models.Company, error) {
+func (c CompanyService) Create(model types.DTOMapper[models.Company, dto.ProjectReqDTO]) (*models.Company, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c CompanyService) Update(id int, model types.DTOMapper[models.Company, dto.ProjectDTO]) (*models.Company, error) {
+func (c CompanyService) Update(id int, model types.DTOMapper[models.Company, dto.ProjectReqDTO]) (*models.Company, error) {
 	//TODO implement me
 	panic("implement me")
 }

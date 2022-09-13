@@ -25,3 +25,7 @@ func DatabaseURI() string {
 func HostPort() string {
 	return env.GetEnvOrDefault(URIPort, ":8008")
 }
+
+var DateResponseFormat = "Jan 2, 2006"
+var DateTimeResponseFormat = "Jan 2, 2006 15:04"
+var DateTimeMinSecResponseFormat = "Jan 2, 2006 15:04:05"

@@ -4,17 +4,23 @@ import (
 	"gopher-camp/pkg/models"
 )
 
-type ProjectDTO struct {
+type ProjectReqDTO struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	CompanyId   int    `json:"companyId"`
 }
 
-func (p *ProjectDTO) GetDTO() ProjectDTO {
+type ProjectResponseDTO struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	LastUpdated string `json:"lastUpdated"`
+}
+
+func (p *ProjectReqDTO) GetDTO() ProjectReqDTO {
 	return *p
 }
 
-func (p *ProjectDTO) MapToDO(domain *models.Project) *models.Project {
+func (p *ProjectReqDTO) MapToDO(domain *models.Project) *models.Project {
 	domain.Name = p.Name
 	domain.Description = p.Description
 

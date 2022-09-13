@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
+	"gopher-camp/pkg/constants"
 	"gopher-camp/pkg/dto"
 	"gopher-camp/pkg/models"
 	"gopher-camp/pkg/storage"
@@ -12,7 +13,7 @@ import (
 )
 
 type ProjectController struct {
-	service storage.Storage[models.Project, dto.ProjectDTO]
+	service storage.Storage[models.Project, dto.ProjectReqDTO]
 }
 
 func (pc ProjectController) GetProjects(w http.ResponseWriter, r *http.Request) {
@@ -64,11 +65,11 @@ func (pc ProjectController) UpdateProject(w http.ResponseWriter, r *http.Request
 
 func (pc ProjectController) CreateProject(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	projectDTO := &dto.ProjectDTO{}
+	projectDTO := &dto.ProjectReqDTO{}
 	utils.ParseBody(r, projectDTO)
 	project, err := pc.service.Create(projectDTO)
 	if err != nil {
-		res, _ := json.Marshal(utils.FailureResponse(err))
+		res, _ := json.Marshal(utils.CreateFailure(err))
 		_, _ = w.Write(res)
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -83,13 +84,37 @@ func (pc ProjectController) CreateProject(w http.ResponseWriter, r *http.Request
 }
 
 func (pc ProjectController) GetProject(w http.ResponseWriter, r *http.Request) {
-	//params := mux.Vars(r)
-	//projectId := params["projectId"]
-	//id, err := strconv.ParseInt(projectId, 0, 0)
 	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	projectId := params["projectId"]
+	id, err := strconv.ParseInt(projectId, 0, 0)
+	if err != nil {
+		res, _ := json.Marshal(utils.CreateFailureWithMessage(err, "invalid id param"))
+		_, _ = w.Write(res)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	project, err := pc.service.FindById(int(id))
+	if err != nil {
+		res, _ := json.Marshal(utils.CreateFailure(err))
+		_, _ = w.Write(res)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	responseDTO := convertProjectToResponseDTO(*project)
+	res, _ := json.Marshal(utils.SingleObject(responseDTO))
+	_, _ = w.Write(res)
 	w.WriteHeader(http.StatusOK)
 }
 
-func NewProjectController(service storage.Storage[models.Project, dto.ProjectDTO]) ProjectController {
+func convertProjectToResponseDTO(project models.Project) dto.ProjectResponseDTO {
+	return dto.ProjectResponseDTO{
+		Name:        project.Name,
+		Description: project.Description,
+		LastUpdated: utils.DateTime(project.UpdatedAt, constants.DateResponseFormat),
+	}
+}
+
+func NewProjectController(service storage.Storage[models.Project, dto.ProjectReqDTO]) ProjectController {
 	return ProjectController{service: service}
 }

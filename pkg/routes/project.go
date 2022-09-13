@@ -8,7 +8,7 @@ import (
 	"gopher-camp/pkg/storage"
 )
 
-var RegisterProjectRoutes = func(router *mux.Router, service storage.Storage[models.Project, dto.ProjectDTO]) {
+var RegisterProjectRoutes = func(router *mux.Router, service storage.Storage[models.Project, dto.ProjectReqDTO]) {
 	projectController := controllers.NewProjectController(service)
 	router.HandleFunc("/projects/", projectController.GetProjects).Methods("GET")
 	router.HandleFunc("/projects/", projectController.CreateProject).Methods("POST")

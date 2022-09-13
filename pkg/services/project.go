@@ -14,7 +14,7 @@ import (
 type ProjectService struct {
 	db        *gorm.DB
 	logger    types.Logger
-	coService storage.Storage[models.Company, dto.ProjectDTO]
+	coService storage.Storage[models.Company, dto.ProjectReqDTO]
 }
 
 func (p ProjectService) FindAll() []models.Project {
@@ -38,7 +38,7 @@ func (p ProjectService) FindById(id int) (*models.Project, error) {
 	return project, nil
 }
 
-func (p ProjectService) Create(newProject types.DTOMapper[models.Project, dto.ProjectDTO]) (*models.Project, error) {
+func (p ProjectService) Create(newProject types.DTOMapper[models.Project, dto.ProjectReqDTO]) (*models.Project, error) {
 	project := models.NewProject()
 	err := convertProjectDTOToProject(newProject, project)
 	if err != nil {
@@ -56,12 +56,12 @@ func (p ProjectService) Create(newProject types.DTOMapper[models.Project, dto.Pr
 	return project, nil
 }
 
-func (p ProjectService) Update(id int, project types.DTOMapper[models.Project, dto.ProjectDTO]) (*models.Project, error) {
+func (p ProjectService) Update(id int, project types.DTOMapper[models.Project, dto.ProjectReqDTO]) (*models.Project, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func NewProjectService(db database.Database, logger types.Logger, coService storage.Storage[models.Company, dto.ProjectDTO]) ProjectService {
+func NewProjectService(db database.Database, logger types.Logger, coService storage.Storage[models.Company, dto.ProjectReqDTO]) ProjectService {
 	return ProjectService{
 		db:        db.GetDB(),
 		logger:    logger,
@@ -69,7 +69,7 @@ func NewProjectService(db database.Database, logger types.Logger, coService stor
 	}
 }
 
-func convertProjectDTOToProject(projectDTO types.DTOMapper[models.Project, dto.ProjectDTO], project *models.Project) error {
+func convertProjectDTOToProject(projectDTO types.DTOMapper[models.Project, dto.ProjectReqDTO], project *models.Project) error {
 	projectDTO.MapToDO(project)
 
 	return nil

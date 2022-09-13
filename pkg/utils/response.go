@@ -1,20 +1,28 @@
 package utils
 
-import "time"
+import (
+	"gopher-camp/pkg/constants"
+	"time"
+)
 
 type ArrayResponse[T any] struct {
 	Message string `json:"message"`
 	Data    []T    `json:"data"`
 }
 
-type Failure struct {
-	Error string    `json:"error"`
-	Date  time.Time `date:"datetime"`
+type ErrorData struct {
+	Error string `json:"error"`
+	Date  string `json:"datetime"`
+}
+
+type ErrorWithMessage struct {
+	Error   ErrorData `json:"error"`
+	Message string    `json:"message"`
 }
 
 type DataResponse[T any] struct {
-	Data T         `json:"data"`
-	Date time.Time `date:"datetime"`
+	Data T      `json:"data"`
+	Date string `json:"datetime"`
 }
 
 func SuccessArray[T any](data []T, msg string) ArrayResponse[T] {
@@ -28,16 +36,23 @@ func SuccessArray[T any](data []T, msg string) ArrayResponse[T] {
 	}
 }
 
-func FailureResponse(err error) Failure {
-	return Failure{
-		Date:  time.Now(),
+func CreateFailure(err error) ErrorData {
+	return ErrorData{
+		Date:  DateTime(time.Now(), constants.DateTimeResponseFormat),
 		Error: err.Error(),
+	}
+}
+
+func CreateFailureWithMessage(err error, message string) ErrorWithMessage {
+	return ErrorWithMessage{
+		Message: message,
+		Error:   CreateFailure(err),
 	}
 }
 
 func SingleObject[T any](data T) DataResponse[T] {
 	return DataResponse[T]{
-		Date: time.Now(),
+		Date: DateTime(time.Now(), constants.DateTimeMinSecResponseFormat),
 		Data: data,
 	}
 }
