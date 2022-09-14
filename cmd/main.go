@@ -2,22 +2,24 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
 	"gopher-camp/pkg/config/database"
 	"gopher-camp/pkg/constants"
 	"gopher-camp/pkg/helpers"
+	muxServer "gopher-camp/pkg/http/rest/mux"
 	"gopher-camp/pkg/models"
 	"gopher-camp/pkg/routes"
 	"gopher-camp/pkg/services"
 	"gopher-camp/pkg/utils"
 	"log"
 	"net/http"
+	"time"
 )
 
 func main() {
-	r := mux.NewRouter()
 	port := constants.HostPort()
 	logger := utils.NewCustomLogger()
+	address := fmt.Sprintf("127.0.0.1%v", port)
+	muxSrv, srv := muxServer.NewMuxServer(address, 15*time.Second, 15*time.Second)
 
 	db := database.NewDatabase()
 	db.OpenConnection("postgres", constants.DatabaseURI())
@@ -30,9 +32,9 @@ func main() {
 	companyService := services.NewCompanyService(*db, logger)
 	projectService := services.NewProjectService(*db, logger, companyService)
 
-	r.Handle("/", fileServer)
-	routes.RegisterProjectRoutes(r, projectService)
+	muxSrv.Router.Handle("/", fileServer)
+	routes.RegisterProjectRoutes(muxSrv, projectService)
 
 	fmt.Printf("Starting server on port " + port + "\n")
-	log.Fatal(http.ListenAndServe(port, r))
+	log.Fatal(srv.ListenAndServe())
 }

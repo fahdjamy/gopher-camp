@@ -1,36 +1,48 @@
 package mux
 
 import (
+	"github.com/gorilla/mux"
 	"net/http"
 	"time"
 )
 
-type mux struct {
-	Addr         string
-	ReadTimeout  time.Time
-	WriteTimeout time.Time
+type Server struct {
+	Router *mux.Router
 }
 
-func (m mux) Get(path string, handler http.Handler) {
-	//TODO implement me
-	panic("implement me")
+var (
+	getMethod    = "GET"
+	putMethod    = "PUT"
+	postMethod   = "POST"
+	deleteMethod = "DELETE"
+)
+
+func (m Server) Get(path string, handler http.HandlerFunc) {
+	m.Router.HandleFunc(path, handler).Methods(getMethod)
 }
 
-func (m mux) Put(path string, handler http.Handler) {
-	//TODO implement me
-	panic("implement me")
+func (m Server) Put(path string, handler http.HandlerFunc) {
+	m.Router.HandleFunc(path, handler).Methods(putMethod)
 }
 
-func (m mux) Post(path string, handler http.Handler) {
-	//TODO implement me
-	panic("implement me")
+func (m Server) Post(path string, handler http.HandlerFunc) {
+	m.Router.HandleFunc(path, handler).Methods(postMethod)
 }
 
-func (m mux) Delete(path string, handler http.Handler) {
-	//TODO implement me
-	panic("implement me")
+func (m Server) Delete(path string, handler http.HandlerFunc) {
+	m.Router.HandleFunc(path, handler).Methods(deleteMethod)
 }
 
-func NewMux() *mux {
-	return &mux{}
+func NewMuxServer(address string, readTimeOut time.Duration, writeTimeOut time.Duration) (Server, *http.Server) {
+	router := mux.NewRouter().StrictSlash(true)
+	muxSvr := Server{
+		Router: router,
+	}
+	httpSrv := &http.Server{
+		Handler:      router,
+		Addr:         address,
+		WriteTimeout: writeTimeOut,
+		ReadTimeout:  readTimeOut,
+	}
+	return muxSvr, httpSrv
 }

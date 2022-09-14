@@ -18,7 +18,8 @@ type ProjectController struct {
 
 func (pc ProjectController) GetProjects(w http.ResponseWriter, r *http.Request) {
 	projects := pc.service.FindAll()
-	res, _ := json.Marshal(utils.SuccessArray(projects, "success"))
+
+	res, _ := json.Marshal(utils.SuccessArray(projectsToProjectsDTO(projects), "success"))
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_, err := w.Write(res)
@@ -48,18 +49,6 @@ func (pc ProjectController) DeleteProjects(w http.ResponseWriter, r *http.Reques
 }
 
 func (pc ProjectController) UpdateProject(w http.ResponseWriter, r *http.Request) {
-	//params := mux.Vars(r)
-	//project := &models.Project{}
-	//utils.ParseBody(r, project)
-	//
-	//projectId := params["projectId"]
-	//_, err := strconv.ParseInt(projectId, 0, 0)
-	//w.Header().Set("Content-Type", "application/json")
-	//if err != nil {
-	//	w.WriteHeader(http.StatusBadRequest)
-	//	return
-	//}
-
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -113,6 +102,14 @@ func convertProjectToResponseDTO(project models.Project) dto.ProjectResponseDTO 
 		Description: project.Description,
 		LastUpdated: utils.DateTime(project.UpdatedAt, constants.DateResponseFormat),
 	}
+}
+
+func projectsToProjectsDTO(projects []models.Project) []dto.ProjectResponseDTO {
+	var projectDTOs []dto.ProjectResponseDTO
+	for _, project := range projects {
+		projectDTOs = append(projectDTOs, convertProjectToResponseDTO(project))
+	}
+	return projectDTOs
 }
 
 func NewProjectController(service storage.Storage[models.Project, dto.ProjectReqDTO]) ProjectController {

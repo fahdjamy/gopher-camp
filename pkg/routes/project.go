@@ -1,18 +1,21 @@
 package routes
 
 import (
-	"github.com/gorilla/mux"
 	"gopher-camp/pkg/controllers"
 	"gopher-camp/pkg/dto"
 	"gopher-camp/pkg/models"
 	"gopher-camp/pkg/storage"
+	"gopher-camp/pkg/types"
 )
 
-var RegisterProjectRoutes = func(router *mux.Router, service storage.Storage[models.Project, dto.ProjectReqDTO]) {
+var RegisterProjectRoutes = func(
+	routers types.RestRouters,
+	service storage.Storage[models.Project, dto.ProjectReqDTO]) {
 	projectController := controllers.NewProjectController(service)
-	router.HandleFunc("/projects/", projectController.GetProjects).Methods("GET")
-	router.HandleFunc("/projects/", projectController.CreateProject).Methods("POST")
-	router.HandleFunc("/projects/{projectId}", projectController.GetProject).Methods("GET")
-	router.HandleFunc("/projects/{projectId}", projectController.UpdateProject).Methods("POST")
-	router.HandleFunc("/projects/{projectId}", projectController.DeleteProjects).Methods("DELETE")
+
+	routers.Get("/projects/", projectController.GetProjects)
+	routers.Post("/projects/", projectController.CreateProject)
+	routers.Get("/projects/{projectId}/", projectController.GetProject)
+	routers.Put("/projects/{projectId}/", projectController.UpdateProject)
+	routers.Delete("/projects/{projectId}/", projectController.DeleteProjects)
 }

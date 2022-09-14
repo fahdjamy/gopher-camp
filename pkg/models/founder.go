@@ -10,7 +10,7 @@ type Founder struct {
 	ID        int       `gorm:"primaryKey" json:"id"`
 	Name      string    `json:"name"`
 	Email     string    `json:"founder"`
-	LinkedIn  string    `json:"website"`
+	LinkedIn  string    `json:"linkedIn"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
