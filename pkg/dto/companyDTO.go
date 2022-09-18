@@ -3,6 +3,7 @@ package dto
 import "gopher-camp/pkg/models"
 
 type CompanyResponse struct {
+	ID          uint              `json:"id"`
 	Name        string            `json:"name"`
 	Founder     []FounderResponse `json:"founder"`
 	Website     string            `json:"website"`

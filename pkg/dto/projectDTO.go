@@ -22,7 +22,7 @@ func (p *ProjectReqDTO) MapToDO(domain *models.Project) *models.Project {
 }
 
 type ProjectResponseDTO struct {
-	ID          int             `json:"id"`
+	ID          uint            `json:"id"`
 	Name        string          `json:"name"`
 	Company     CompanyResponse `json:"company"`
 	Description string          `json:"description"`

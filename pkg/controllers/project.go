@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"gopher-camp/pkg/constants"
 	"gopher-camp/pkg/dto"
 	"gopher-camp/pkg/models"
 	"gopher-camp/pkg/storage"
@@ -13,13 +12,13 @@ import (
 )
 
 type ProjectController struct {
-	service storage.Storage[models.Project, dto.ProjectReqDTO]
+	service storage.Storage[models.Project, dto.ProjectReqDTO, dto.ProjectResponseDTO]
 }
 
 func (pc ProjectController) GetProjects(w http.ResponseWriter, r *http.Request) {
 	projects := pc.service.FindAll()
 
-	res, _ := json.Marshal(utils.SuccessArray(projectsToProjectsDTO(projects), "success"))
+	res, _ := json.Marshal(utils.SuccessArray(projects, "success"))
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_, err := w.Write(res)
@@ -90,28 +89,11 @@ func (pc ProjectController) GetProject(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	responseDTO := convertProjectToResponseDTO(*project)
-	res, _ := json.Marshal(utils.SingleObject(responseDTO))
+	res, _ := json.Marshal(utils.SingleObject(project))
 	_, _ = w.Write(res)
 	w.WriteHeader(http.StatusOK)
 }
 
-func convertProjectToResponseDTO(project models.Project) dto.ProjectResponseDTO {
-	return dto.ProjectResponseDTO{
-		Name:        project.Name,
-		Description: project.Description,
-		LastUpdated: utils.DateTime(project.UpdatedAt, constants.DateResponseFormat),
-	}
-}
-
-func projectsToProjectsDTO(projects []models.Project) []dto.ProjectResponseDTO {
-	var projectDTOs []dto.ProjectResponseDTO
-	for _, project := range projects {
-		projectDTOs = append(projectDTOs, convertProjectToResponseDTO(project))
-	}
-	return projectDTOs
-}
-
-func NewProjectController(service storage.Storage[models.Project, dto.ProjectReqDTO]) ProjectController {
+func NewProjectController(service storage.Storage[models.Project, dto.ProjectReqDTO, dto.ProjectResponseDTO]) ProjectController {
 	return ProjectController{service: service}
 }
