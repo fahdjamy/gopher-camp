@@ -1,7 +1,7 @@
 package models
 
 import (
-	"gopher-camp/pkg/config/database"
+	"gopher-camp/pkg/storage/database"
 	"log"
 )
 

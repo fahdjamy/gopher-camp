@@ -3,24 +3,23 @@ package services
 import (
 	"errors"
 	"fmt"
-	"gopher-camp/pkg/config/database"
-	"gopher-camp/pkg/dto"
 	"gopher-camp/pkg/models"
-	"gopher-camp/pkg/storage"
+	"gopher-camp/pkg/storage/database"
 	"gopher-camp/pkg/types"
+	dto2 "gopher-camp/pkg/types/dto"
 	"gorm.io/gorm"
 )
 
 type ProjectService struct {
 	db        *gorm.DB
 	logger    types.Logger
-	coService storage.Storage[models.Company, dto.CompanyResponse, dto.CompanyResponse]
+	coService types.Storage[models.Company, dto2.CompanyResponse, dto2.CompanyResponse]
 }
 
-func (p ProjectService) FindAll() []dto.ProjectResponseDTO {
+func (p ProjectService) FindAll() []dto2.ProjectResponseDTO {
 	var projects []models.Project
 	p.db.Preload("Companies").Find(&projects)
-	var projectsResponse []dto.ProjectResponseDTO
+	var projectsResponse []dto2.ProjectResponseDTO
 	for _, prj := range projects {
 		projectsResponse = append(projectsResponse, p.convertToProjectResponse(prj))
 	}
@@ -32,9 +31,9 @@ func (p ProjectService) Delete(id int) (bool, error) {
 	panic("implement me")
 }
 
-func (p ProjectService) FindById(id int) (dto.ProjectResponseDTO, error) {
+func (p ProjectService) FindById(id int) (dto2.ProjectResponseDTO, error) {
 	project := &models.Project{}
-	var projectResponse dto.ProjectResponseDTO
+	var projectResponse dto2.ProjectResponseDTO
 	rec := p.db.Where("id = ?", id).Limit(1).Find(project)
 
 	if rec.RowsAffected == 0 {
@@ -44,9 +43,9 @@ func (p ProjectService) FindById(id int) (dto.ProjectResponseDTO, error) {
 	return p.convertToProjectResponse(*project), nil
 }
 
-func (p ProjectService) Create(newProject types.DTOMapper[models.Project, dto.ProjectReqDTO]) (dto.ProjectResponseDTO, error) {
+func (p ProjectService) Create(newProject types.DTOMapper[models.Project, dto2.ProjectReqDTO]) (dto2.ProjectResponseDTO, error) {
 	project := models.NewProject()
-	var projectResp dto.ProjectResponseDTO
+	var projectResp dto2.ProjectResponseDTO
 	err := convertProjectDTOToProject(newProject, project)
 	if err != nil {
 		p.logger.LogError(err, "ProjectService.Create", "service")
@@ -67,15 +66,15 @@ func (p ProjectService) Create(newProject types.DTOMapper[models.Project, dto.Pr
 	return projectResp, nil
 }
 
-func (p ProjectService) Update(id int, project types.DTOMapper[models.Project, dto.ProjectReqDTO]) (dto.ProjectResponseDTO, error) {
+func (p ProjectService) Update(id int, project types.DTOMapper[models.Project, dto2.ProjectReqDTO]) (dto2.ProjectResponseDTO, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (p ProjectService) convertToProjectResponse(project models.Project) dto.ProjectResponseDTO {
+func (p ProjectService) convertToProjectResponse(project models.Project) dto2.ProjectResponseDTO {
 	company, _ := p.coService.FindById(int(project.CompanyID))
 
-	return dto.ProjectResponseDTO{
+	return dto2.ProjectResponseDTO{
 		Company:     company,
 		Name:        project.Name,
 		ID:          project.ID,
@@ -83,7 +82,7 @@ func (p ProjectService) convertToProjectResponse(project models.Project) dto.Pro
 	}
 }
 
-func NewProjectService(db database.Database, logger types.Logger, coService storage.Storage[models.Company, dto.CompanyResponse, dto.CompanyResponse]) ProjectService {
+func NewProjectService(db database.Database, logger types.Logger, coService types.Storage[models.Company, dto2.CompanyResponse, dto2.CompanyResponse]) ProjectService {
 	return ProjectService{
 		db:        db.GetDB(),
 		logger:    logger,
@@ -91,7 +90,7 @@ func NewProjectService(db database.Database, logger types.Logger, coService stor
 	}
 }
 
-func convertProjectDTOToProject(projectDTO types.DTOMapper[models.Project, dto.ProjectReqDTO], project *models.Project) error {
+func convertProjectDTOToProject(projectDTO types.DTOMapper[models.Project, dto2.ProjectReqDTO], project *models.Project) error {
 	projectDTO.MapToDO(project)
 
 	return nil

@@ -3,16 +3,16 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"gopher-camp/pkg/dto"
 	"gopher-camp/pkg/models"
-	"gopher-camp/pkg/storage"
+	"gopher-camp/pkg/types"
+	"gopher-camp/pkg/types/dto"
 	"gopher-camp/pkg/utils"
 	"net/http"
 	"strconv"
 )
 
 type ProjectController struct {
-	service storage.Storage[models.Project, dto.ProjectReqDTO, dto.ProjectResponseDTO]
+	service types.Storage[models.Project, dto.ProjectReqDTO, dto.ProjectResponseDTO]
 }
 
 func (pc ProjectController) GetProjects(w http.ResponseWriter, r *http.Request) {
@@ -94,6 +94,6 @@ func (pc ProjectController) GetProject(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func NewProjectController(service storage.Storage[models.Project, dto.ProjectReqDTO, dto.ProjectResponseDTO]) ProjectController {
+func NewProjectController(service types.Storage[models.Project, dto.ProjectReqDTO, dto.ProjectResponseDTO]) ProjectController {
 	return ProjectController{service: service}
 }

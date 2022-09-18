@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"gopher-camp/pkg/config"
-	"gopher-camp/pkg/config/database"
 	"gopher-camp/pkg/constants"
 	"gopher-camp/pkg/env"
 	"gopher-camp/pkg/helpers"
@@ -11,6 +10,7 @@ import (
 	"gopher-camp/pkg/models"
 	"gopher-camp/pkg/routes"
 	"gopher-camp/pkg/services"
+	"gopher-camp/pkg/storage/database"
 	"gopher-camp/pkg/utils"
 	"log"
 	"net/http"

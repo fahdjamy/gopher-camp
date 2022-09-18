@@ -2,13 +2,12 @@ package routes
 
 import (
 	"gopher-camp/pkg/controllers"
-	"gopher-camp/pkg/dto"
 	"gopher-camp/pkg/models"
-	"gopher-camp/pkg/storage"
 	"gopher-camp/pkg/types"
+	"gopher-camp/pkg/types/dto"
 )
 
-var RegisterProjectRoutes = func(routers types.RestRouters, service storage.Storage[models.Project, dto.ProjectReqDTO, dto.ProjectResponseDTO]) {
+var RegisterProjectRoutes = func(routers types.RestRouters, service types.Storage[models.Project, dto.ProjectReqDTO, dto.ProjectResponseDTO]) {
 	projectController := controllers.NewProjectController(service)
 
 	routers.Get("/projects/", projectController.GetProjects)

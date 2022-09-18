@@ -2,8 +2,8 @@ package helpers
 
 import (
 	"fmt"
+	"gopher-camp/pkg/helpers/seed"
 	"gopher-camp/pkg/models"
-	"gopher-camp/pkg/seed"
 	"gopher-camp/pkg/types"
 	"gorm.io/gorm"
 )
