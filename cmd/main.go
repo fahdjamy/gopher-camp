@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"gopher-camp/pkg/config"
 	"gopher-camp/pkg/config/database"
 	"gopher-camp/pkg/constants"
+	"gopher-camp/pkg/env"
 	"gopher-camp/pkg/helpers"
 	muxServer "gopher-camp/pkg/http/rest/mux"
 	"gopher-camp/pkg/models"
@@ -22,9 +24,21 @@ func main() {
 	muxSrv, srv := muxServer.NewMuxServer(address, 15*time.Second, 15*time.Second)
 
 	db := database.NewDatabase()
-	db.OpenConnection("postgres", constants.DatabaseURI())
+	dbConfig := config.DatabaseConfig{
+		Host:     env.GetEnv(constants.DBHost),
+		Name:     env.GetEnv(constants.DBName),
+		Port:     env.GetEnv(constants.DBPort),
+		User:     env.GetEnv(constants.DBUser),
+		Password: env.GetEnv(constants.DBPassword),
+		SslMode:  env.GetEnvOrDefault(constants.DBSSLMode, "disable"),
+	}
+	db.OpenPostgresConn(dbConfig)
 
-	models.MigrateAllModels(db)
+	err := models.MigrateAllModels(db)
+	if err != nil {
+		logger.LogError(err, "tables.MigrateAllModels", "tables")
+		return
+	}
 
 	_ = helpers.SeedDatabaseData(db.GetDB(), logger)
 

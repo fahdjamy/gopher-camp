@@ -6,9 +6,10 @@ import (
 )
 
 type Company struct {
-	ID        int       `gorm:"primaryKey" json:"id"`
+	ID        uint      `gorm:"primaryKey" json:"id"`
 	Name      string    `json:"name"`
-	Founder   Founder   `json:"founder"`
+	Founder   []Founder `json:"founders" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Project   []Project `json:"projects" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Website   string    `json:"website"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
@@ -20,6 +21,5 @@ func (c Company) Me() string {
 }
 
 func (c Company) Validate() error {
-	//TODO implement me
-	panic("implement me")
+	return nil
 }

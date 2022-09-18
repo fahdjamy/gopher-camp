@@ -1,8 +1,10 @@
 package database
 
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"fmt"
+	"gopher-camp/pkg/config"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"log"
 )
 
@@ -10,15 +12,24 @@ type Database struct {
 	db *gorm.DB
 }
 
-func (dataBase *Database) OpenConnection(dialect string, dbURI string) {
-	//"host=localhost port= user= dbname= password=",
+func (dataBase *Database) OpenPostgresConn(config config.DatabaseConfig) {
+	//"host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable",
+	dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v sslmode=%v",
+		config.Host,
+		config.User,
+		config.Password,
+		config.Name,
+		config.Port,
+		config.SslMode)
 
-	dbConn, err := gorm.Open(dialect, dbURI)
+	log.Println(dsn)
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
-	dataBase.db = dbConn
+	dataBase.db = db
 }
 
 func (dataBase *Database) GetDB() *gorm.DB {

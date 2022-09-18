@@ -2,18 +2,18 @@ package seed
 
 import (
 	"errors"
-	"github.com/jinzhu/gorm"
 	"gopher-camp/pkg/models"
 	"gopher-camp/pkg/validators"
+	"gorm.io/gorm"
 )
 
 type DatabaseSeeder struct {
 	db *gorm.DB
 }
 
-func newCompany(founder *models.Founder) *models.Company {
+func newCompany(founders []models.Founder) *models.Company {
 	company := &models.Company{
-		Founder: *founder,
+		Founder: founders,
 		Name:    "Hacker Bay",
 		Website: "https://hackerbay.io/",
 	}
@@ -29,13 +29,17 @@ func newFounder() *models.Founder {
 	return founder
 }
 
-func (ds DatabaseSeeder) CreateCompany(founder *models.Founder) (*models.Company, error) {
-	company := newCompany(founder)
+func (ds DatabaseSeeder) CreateCompany(founders []*models.Founder) (*models.Company, error) {
+	var allFounders []models.Founder
+	for _, founder := range founders {
+		if len(founders) > 0 && !ds.founderExists(founder) {
+			return nil, errors.New("founder does not exist in the Database")
+		}
+		allFounders = append(allFounders, *founder)
+	}
+	company := newCompany(allFounders)
 	if ds.companyExists(company) {
 		return company, nil
-	}
-	if !ds.founderExists(founder) {
-		return nil, errors.New("founder does not exist in the Database")
 	}
 	ds.db.Create(company)
 

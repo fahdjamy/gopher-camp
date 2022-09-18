@@ -6,12 +6,12 @@ import (
 )
 
 type Project struct {
-	ID          int       `gorm:"primaryKey" json:"id"`
+	ID          uint      `gorm:"primaryKey" json:"id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
-	Company     *Company  `json:"company"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
+	CompanyID   uint      `json:"company" gorm:"constraint:OnUpdate:CASCADE"`
 }
 
 func (p Project) Me() string {

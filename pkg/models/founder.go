@@ -7,8 +7,9 @@ import (
 )
 
 type Founder struct {
-	ID        int       `gorm:"primaryKey" json:"id"`
+	ID        uint      `gorm:"primaryKey" json:"id"`
 	Name      string    `json:"name"`
+	CompanyID uint      `gorm:"constraint:OnUpdate:CASCADE"`
 	Email     string    `json:"founder"`
 	LinkedIn  string    `json:"linkedIn"`
 	CreatedAt time.Time `json:"createdAt"`

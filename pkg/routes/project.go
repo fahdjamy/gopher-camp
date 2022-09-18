@@ -8,9 +8,7 @@ import (
 	"gopher-camp/pkg/types"
 )
 
-var RegisterProjectRoutes = func(
-	routers types.RestRouters,
-	service storage.Storage[models.Project, dto.ProjectReqDTO]) {
+var RegisterProjectRoutes = func(routers types.RestRouters, service storage.Storage[models.Project, dto.ProjectReqDTO]) {
 	projectController := controllers.NewProjectController(service)
 
 	routers.Get("/projects/", projectController.GetProjects)

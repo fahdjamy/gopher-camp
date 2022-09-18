@@ -2,6 +2,6 @@ package validators
 
 import "reflect"
 
-func IsIntEmpty(val int) bool {
+func IsIntEmpty(val uint) bool {
 	return reflect.ValueOf(val).IsZero()
 }

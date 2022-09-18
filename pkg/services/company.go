@@ -3,11 +3,11 @@ package services
 import (
 	"errors"
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"gopher-camp/pkg/config/database"
 	"gopher-camp/pkg/dto"
 	"gopher-camp/pkg/models"
 	"gopher-camp/pkg/types"
+	"gorm.io/gorm"
 )
 
 type CompanyService struct {
@@ -17,7 +17,7 @@ type CompanyService struct {
 
 func (c CompanyService) FindAll() []models.Company {
 	var companies []models.Company
-	c.db.Find(&companies)
+	c.db.Preload("Founders").Find(&companies)
 	return companies
 }
 

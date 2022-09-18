@@ -10,12 +10,6 @@ type ProjectReqDTO struct {
 	CompanyId   int    `json:"companyId"`
 }
 
-type ProjectResponseDTO struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	LastUpdated string `json:"lastUpdated"`
-}
-
 func (p *ProjectReqDTO) GetDTO() ProjectReqDTO {
 	return *p
 }
@@ -24,5 +18,23 @@ func (p *ProjectReqDTO) MapToDO(domain *models.Project) *models.Project {
 	domain.Name = p.Name
 	domain.Description = p.Description
 
+	return domain
+}
+
+type ProjectResponseDTO struct {
+	ID          int             `json:"id"`
+	Name        string          `json:"name"`
+	Company     CompanyResponse `json:"company"`
+	Description string          `json:"description"`
+	LastUpdated string          `json:"lastUpdated"`
+}
+
+func (p *ProjectResponseDTO) GetDTO() ProjectResponseDTO {
+	return *p
+}
+
+func (p *ProjectResponseDTO) MapToDO(domain *models.Project) *models.Project {
+	domain.Name = p.Name
+	domain.Description = p.Description
 	return domain
 }

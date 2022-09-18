@@ -1,26 +1,16 @@
 package constants
 
 import (
-	"fmt"
 	"gopher-camp/pkg/env"
 )
 
-var DbName = "DATABASE_NAME"
-var DbHost = "DATABASE_HOST"
-var DbPort = "DATABASE_PORT"
-var DbUser = "DATABASE_USER"
-var DbPassword = "DATABASE_PASS"
+var DBName = "DATABASE_NAME"
+var DBHost = "DATABASE_HOST"
+var DBSSLMode = "DATABASE_SSL_MODE"
+var DBPort = "DATABASE_PORT"
+var DBUser = "DATABASE_USER"
+var DBPassword = "DATABASE_PASS"
 var URIPort = "URL_PORT"
-
-func DatabaseURI() string {
-	url := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
-		env.GetEnv(DbUser),
-		env.GetEnv(DbPassword),
-		env.GetEnv(DbHost),
-		env.GetEnv(DbPort),
-		env.GetEnv(DbName))
-	return url
-}
 
 func HostPort() string {
 	return env.GetEnvOrDefault(URIPort, ":8008")

@@ -3,12 +3,12 @@ package services
 import (
 	"errors"
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"gopher-camp/pkg/config/database"
 	"gopher-camp/pkg/dto"
 	"gopher-camp/pkg/models"
 	"gopher-camp/pkg/storage"
 	"gopher-camp/pkg/types"
+	"gorm.io/gorm"
 )
 
 type ProjectService struct {
@@ -19,7 +19,7 @@ type ProjectService struct {
 
 func (p ProjectService) FindAll() []models.Project {
 	var projects []models.Project
-	p.db.Find(&projects)
+	p.db.Preload("Companies").Find(&projects)
 	return projects
 }
 
@@ -50,8 +50,9 @@ func (p ProjectService) Create(newProject types.DTOMapper[models.Project, dto.Pr
 	if err != nil {
 		return nil, err
 	}
-	project.Company = company
+	project.CompanyID = company.ID
 	p.db.Create(project)
+	p.db.Preload("Companies").Find(project)
 
 	return project, nil
 }

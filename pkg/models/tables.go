@@ -5,17 +5,35 @@ import (
 	"log"
 )
 
-func MigrateProject(database *database.Database) {
+func MigrateFounder(database *database.Database) error {
+	log.Println(".........Migrating Founder Table......")
+	err := database.GetDB().AutoMigrate(&Founder{})
+	return err
+}
+
+func MigrateProject(database *database.Database) error {
 	log.Println(".........Migrating Project Table......")
-	database.GetDB().AutoMigrate(&Project{})
+	err := database.GetDB().AutoMigrate(&Project{})
+	return err
 }
 
-func MigrateCompany(database *database.Database) {
+func MigrateCompany(database *database.Database) error {
 	log.Println(".........Migrating Company Table......")
-	database.GetDB().AutoMigrate(&Company{})
+	err := database.GetDB().AutoMigrate(&Company{})
+	return err
 }
 
-func MigrateAllModels(database *database.Database) {
+func MigrateAllModels(database *database.Database) error {
 	log.Println(".........Migrating all tables......")
-	database.GetDB().AutoMigrate(&Founder{}, &Company{}, &Project{})
+	err := MigrateFounder(database)
+	if err != nil {
+		return err
+	}
+	err = MigrateCompany(database)
+	if err != nil {
+		return err
+	}
+	err = MigrateProject(database)
+
+	return err
 }
