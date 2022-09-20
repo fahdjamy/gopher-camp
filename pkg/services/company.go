@@ -6,8 +6,9 @@ import (
 	"gopher-camp/pkg/models"
 	"gopher-camp/pkg/storage/database"
 	"gopher-camp/pkg/types"
-	"gopher-camp/pkg/types/dto"
 	"gorm.io/gorm"
+	"log"
+	"strings"
 )
 
 type CompanyService struct {
@@ -15,49 +16,53 @@ type CompanyService struct {
 	logger types.Logger
 }
 
-func (c CompanyService) FindAll() []dto.CompanyResponse {
+func (c CompanyService) FindAll() []models.Company {
 	var companies []models.Company
 	c.db.Preload("Founders").Find(&companies)
 
-	var companiesResponse []dto.CompanyResponse
-
-	for _, co := range companies {
-		companiesResponse = append(companiesResponse, c.convertToCompanyResponse(co))
-	}
-
-	return companiesResponse
+	return companies
 }
 
-func (c CompanyService) Delete(id int) (bool, error) {
+func (c CompanyService) Delete(id uint) (bool, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c CompanyService) FindById(id int) (dto.CompanyResponse, error) {
+func (c CompanyService) FindById(id uint) (*models.Company, error) {
+	log.Println(id)
 	company := &models.Company{}
 	rec := c.db.Where("id = ?", id).First(company)
 
 	if rec.RowsAffected == 0 {
-		return dto.CompanyResponse{}, errors.New(fmt.Sprintf("company with id (%v) does not exist", id))
+		return nil, errors.New(fmt.Sprintf("company with id (%v) does not exist", id))
 	}
-	return c.convertToCompanyResponse(*company), nil
+	return company, nil
 }
 
-func (c CompanyService) Create(model types.DTOMapper[models.Company, dto.CompanyResponse]) (dto.CompanyResponse, error) {
+func (c CompanyService) Create(model *models.Company) (*models.Company, error) {
+	if c.findByName(model.Name) != nil {
+		return nil, errors.New("name must be unique")
+	}
+	model.Name = strings.ToLower(model.Name)
+
+	c.db.Create(model)
+
+	return model, nil
+}
+
+func (c CompanyService) Update(id uint, model *models.Company) (*models.Company, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c CompanyService) Update(id int, model types.DTOMapper[models.Company, dto.CompanyResponse]) (dto.CompanyResponse, error) {
-	//TODO implement me
-	panic("implement me")
-}
-func (c CompanyService) convertToCompanyResponse(company models.Company) dto.CompanyResponse {
-	return dto.CompanyResponse{
-		ID:      company.ID,
-		Name:    company.Name,
-		Website: company.Website,
+func (c CompanyService) findByName(name string) *models.Company {
+	var company models.Company
+	c.db.First(&company, "name = ?", strings.ToLower(name))
+
+	if company.ID != 0 {
+		return &company
 	}
+	return nil
 }
 
 func NewCompanyService(db database.Database, logger types.Logger) CompanyService {

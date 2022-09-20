@@ -6,13 +6,13 @@ import (
 )
 
 type Company struct {
-	ID        uint      `gorm:"primaryKey" json:"id"`
-	Name      string    `json:"name"`
-	Founder   []Founder `json:"founders" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Project   []Project `json:"projects" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Website   string    `json:"website"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	ID        uint      `gorm:"primaryKey" json:"id,omitempty"`
+	Name      string    `json:"name,omitempty"`
+	Founder   []Founder `json:"founders,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Project   []Project `json:"projects,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Website   string    `json:"website,omitempty"`
+	CreatedAt time.Time `json:"createdAt,omitempty"`
+	UpdatedAt time.Time `json:"updatedAt,omitempty"`
 }
 
 func (c Company) Me() string {

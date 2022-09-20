@@ -6,55 +6,45 @@ import (
 	"gopher-camp/pkg/models"
 	"gopher-camp/pkg/storage/database"
 	"gopher-camp/pkg/types"
-	dto2 "gopher-camp/pkg/types/dto"
+	"gopher-camp/pkg/types/dto"
 	"gorm.io/gorm"
 )
 
 type ProjectService struct {
 	db        *gorm.DB
 	logger    types.Logger
-	coService types.Storage[models.Company, dto2.CompanyResponse, dto2.CompanyResponse]
+	coService types.Storage[models.Company]
 }
 
-func (p ProjectService) FindAll() []dto2.ProjectResponseDTO {
+func (p ProjectService) FindAll() []models.Project {
 	var projects []models.Project
 	p.db.Preload("Companies").Find(&projects)
-	var projectsResponse []dto2.ProjectResponseDTO
-	for _, prj := range projects {
-		projectsResponse = append(projectsResponse, p.convertToProjectResponse(prj))
-	}
-	return projectsResponse
+
+	return projects
 }
 
-func (p ProjectService) Delete(id int) (bool, error) {
+func (p ProjectService) Delete(id uint) (bool, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (p ProjectService) FindById(id int) (dto2.ProjectResponseDTO, error) {
+func (p ProjectService) FindById(id uint) (*models.Project, error) {
 	project := &models.Project{}
-	var projectResponse dto2.ProjectResponseDTO
 	rec := p.db.Where("id = ?", id).Limit(1).Find(project)
 
 	if rec.RowsAffected == 0 {
-		return projectResponse, errors.New(fmt.Sprintf("project with id (%v) does not exist", id))
+		return nil, errors.New(fmt.Sprintf("project with id (%v) does not exist", id))
 	}
 
-	return p.convertToProjectResponse(*project), nil
+	return project, nil
 }
 
-func (p ProjectService) Create(newProject types.DTOMapper[models.Project, dto2.ProjectReqDTO]) (dto2.ProjectResponseDTO, error) {
+func (p ProjectService) Create(newProject *models.Project) (*models.Project, error) {
 	project := models.NewProject()
-	var projectResp dto2.ProjectResponseDTO
-	err := convertProjectDTOToProject(newProject, project)
+
+	companyResponse, err := p.coService.FindById(newProject.CompanyID)
 	if err != nil {
-		p.logger.LogError(err, "ProjectService.Create", "service")
-		return projectResp, err
-	}
-	projectDto := newProject.GetDTO()
-	companyResponse, err := p.coService.FindById(projectDto.CompanyId)
-	if err != nil {
-		return projectResp, err
+		return nil, err
 	}
 
 	project.CompanyID = companyResponse.ID
@@ -62,27 +52,15 @@ func (p ProjectService) Create(newProject types.DTOMapper[models.Project, dto2.P
 	p.db.Create(project)
 	p.db.Preload("Companies").Find(project)
 
-	projectResp.Company = companyResponse
-	return projectResp, nil
+	return newProject, nil
 }
 
-func (p ProjectService) Update(id int, project types.DTOMapper[models.Project, dto2.ProjectReqDTO]) (dto2.ProjectResponseDTO, error) {
+func (p ProjectService) Update(id uint, project *models.Project) (*models.Project, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (p ProjectService) convertToProjectResponse(project models.Project) dto2.ProjectResponseDTO {
-	company, _ := p.coService.FindById(int(project.CompanyID))
-
-	return dto2.ProjectResponseDTO{
-		Company:     company,
-		Name:        project.Name,
-		ID:          project.ID,
-		Description: project.Description,
-	}
-}
-
-func NewProjectService(db database.Database, logger types.Logger, coService types.Storage[models.Company, dto2.CompanyResponse, dto2.CompanyResponse]) ProjectService {
+func NewProjectService(db database.Database, logger types.Logger, coService types.Storage[models.Company]) ProjectService {
 	return ProjectService{
 		db:        db.GetDB(),
 		logger:    logger,
@@ -90,7 +68,7 @@ func NewProjectService(db database.Database, logger types.Logger, coService type
 	}
 }
 
-func convertProjectDTOToProject(projectDTO types.DTOMapper[models.Project, dto2.ProjectReqDTO], project *models.Project) error {
+func convertProjectDTOToProject(projectDTO types.DTOMapper[models.Project, dto.ProjectReqDTO], project *models.Project) error {
 	projectDTO.MapToDO(project)
 
 	return nil

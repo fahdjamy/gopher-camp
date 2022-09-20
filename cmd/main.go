@@ -11,6 +11,7 @@ import (
 	"gopher-camp/pkg/routes"
 	"gopher-camp/pkg/services"
 	"gopher-camp/pkg/storage/database"
+	"gopher-camp/pkg/types"
 	"gopher-camp/pkg/utils"
 	"log"
 	"net/http"
@@ -40,14 +41,23 @@ func main() {
 		return
 	}
 
-	_ = helpers.SeedDatabaseData(db.GetDB(), logger)
-
 	fileServer := http.FileServer(http.Dir("./static"))
 	companyService := services.NewCompanyService(*db, logger)
+	founderService := services.NewFounderService(*db, logger)
 	projectService := services.NewProjectService(*db, logger, companyService)
 
+	allServices := types.AllServices{
+		ProjectService: projectService,
+		CompanyService: companyService,
+		FounderService: founderService,
+	}
+	err = helpers.SeedDatabaseData(logger, allServices)
+	if err != nil {
+		logger.LogError(err, "helpers.SeedDatabaseData", "helpers")
+	}
+
 	muxSrv.Router.Handle("/", fileServer)
-	routes.RegisterProjectRoutes(muxSrv, projectService)
+	routes.RegisterProjectRoutes(muxSrv, allServices)
 
 	fmt.Printf("Starting server on port " + port + "\n")
 	log.Fatal(srv.ListenAndServe())

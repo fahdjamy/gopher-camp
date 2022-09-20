@@ -17,11 +17,12 @@ func (p *ProjectReqDTO) GetDTO() ProjectReqDTO {
 func (p *ProjectReqDTO) MapToDO(domain *models.Project) *models.Project {
 	domain.Name = p.Name
 	domain.Description = p.Description
+	domain.CompanyID = uint(p.CompanyId)
 
 	return domain
 }
 
-type ProjectResponseDTO struct {
+type ProjectResponse struct {
 	ID          uint            `json:"id"`
 	Name        string          `json:"name"`
 	Company     CompanyResponse `json:"company"`
@@ -29,11 +30,11 @@ type ProjectResponseDTO struct {
 	LastUpdated string          `json:"lastUpdated"`
 }
 
-func (p *ProjectResponseDTO) GetDTO() ProjectResponseDTO {
+func (p *ProjectResponse) GetDTO() ProjectResponse {
 	return *p
 }
 
-func (p *ProjectResponseDTO) MapToDO(domain *models.Project) *models.Project {
+func (p *ProjectResponse) MapToDO(domain *models.Project) *models.Project {
 	domain.Name = p.Name
 	domain.Description = p.Description
 	return domain

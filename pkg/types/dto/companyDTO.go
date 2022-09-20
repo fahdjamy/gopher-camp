@@ -10,6 +10,12 @@ type CompanyResponse struct {
 	LastUpdated string            `json:"lastUpdated"`
 }
 
+type CompanyRequest struct {
+	Name     string `json:"name"`
+	Founders []int  `json:"founders"`
+	Website  string `json:"website"`
+}
+
 func (c *CompanyResponse) GetDTO() CompanyResponse {
 	return *c
 }

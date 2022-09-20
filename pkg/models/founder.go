@@ -28,3 +28,7 @@ func (f Founder) Validate() error {
 	}
 	return nil
 }
+
+func NewFounder() *Founder {
+	return &Founder{}
+}

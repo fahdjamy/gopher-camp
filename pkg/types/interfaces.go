@@ -27,10 +27,10 @@ type RestRouters interface {
 	Delete(path string, handler http.HandlerFunc)
 }
 
-type Storage[T models.Model, R any, V any] interface {
-	FindAll() []V
-	Delete(id int) (bool, error)
-	FindById(id int) (V, error)
-	Create(model DTOMapper[T, R]) (V, error)
-	Update(id int, model DTOMapper[T, R]) (V, error)
+type Storage[T models.Model] interface {
+	FindAll() []T
+	Delete(id uint) (bool, error)
+	FindById(id uint) (*T, error)
+	Create(model *T) (*T, error)
+	Update(id uint, model *T) (*T, error)
 }
