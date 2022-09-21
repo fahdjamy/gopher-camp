@@ -37,7 +37,11 @@ func main() {
 
 	err := models.MigrateAllModels(db)
 	if err != nil {
-		logger.LogError(err, "tables.MigrateAllModels", "tables")
+		logger.LogError(types.CustomError{
+			Err:      err,
+			DateTime: time.Now(),
+			Source:   "tables.MigrateAllModels",
+		})
 		return
 	}
 
@@ -53,7 +57,11 @@ func main() {
 	}
 	err = helpers.SeedDatabaseData(logger, allServices)
 	if err != nil {
-		logger.LogError(err, "helpers.SeedDatabaseData", "helpers")
+		logger.LogError(types.CustomError{
+			Err:      err,
+			DateTime: time.Now(),
+			Source:   "helpers.SeedDatabaseData",
+		})
 	}
 
 	muxSrv.Router.Handle("/", fileServer)

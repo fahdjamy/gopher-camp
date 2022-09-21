@@ -14,7 +14,7 @@ import (
 )
 
 type ProjectController struct {
-	service  types.Storage[models.Project]
+	service  types.DOServiceProvider[models.Project]
 	services types.AllServices
 }
 
@@ -67,7 +67,7 @@ func (pc ProjectController) CreateProject(w http.ResponseWriter, r *http.Request
 
 	project, err := pc.service.Create(projectDTO.MapToDO(projectDO))
 	if err != nil {
-		res, _ := json.Marshal(utils.CreateFailure(err))
+		res, _ := json.Marshal(utils.CreateFailureWithMessage(err.(types.CustomError)))
 		_, _ = w.Write(res)
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -87,14 +87,14 @@ func (pc ProjectController) GetProject(w http.ResponseWriter, r *http.Request) {
 	projectId := params["projectId"]
 	id, err := strconv.ParseUint(projectId, 0, 0)
 	if err != nil {
-		res, _ := json.Marshal(utils.CreateFailureWithMessage(err, "invalid id param"))
+		res, _ := json.Marshal(utils.CreateFailure(types.CustomError{Err: err}))
 		_, _ = w.Write(res)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	project, err := pc.service.FindById(uint(id))
 	if err != nil {
-		res, _ := json.Marshal(utils.CreateFailure(err))
+		res, _ := json.Marshal(utils.CreateFailureWithMessage(err.(types.CustomError)))
 		_, _ = w.Write(res)
 		w.WriteHeader(http.StatusBadRequest)
 		return

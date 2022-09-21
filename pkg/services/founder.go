@@ -25,7 +25,8 @@ func (f FounderService) FindAll() []models.Founder {
 func (f FounderService) Delete(id uint) (bool, error) {
 	founder, err := f.FindById(id)
 	if err != nil {
-		return false, err
+		cErr := types.CustomError{Err: err}
+		return false, cErr
 	}
 	f.db.Delete(founder)
 
@@ -47,7 +48,9 @@ func (f FounderService) Create(founder *models.Founder) (*models.Founder, error)
 		return nil, errors.New(fmt.Sprintf("Founder name must be unique, Duplicate name %v", founder.Name))
 	}
 	if f.findByEmail(founder.Email) != nil {
-		return nil, errors.New(fmt.Sprintf("Founder Email must be unique, Duplicate Email %v", founder.Email))
+		cErr := types.NewCustomError()
+		cErr.Message = fmt.Sprintf("Founder Email must be unique, Duplicate Email %v", founder.Email)
+		return nil, cErr
 	}
 	founder.Name = strings.ToLower(founder.Name)
 	f.db.Create(founder)
@@ -78,7 +81,8 @@ func (f FounderService) findByEmail(email string) *models.Founder {
 func (f FounderService) Update(id uint, model *models.Founder) (*models.Founder, error) {
 	founder, err := f.FindById(id)
 	if err != nil {
-		return nil, err
+		cErr := types.CustomError{Err: err}
+		return nil, cErr
 	}
 	founder.Email = model.Email
 	return founder, nil

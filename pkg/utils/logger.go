@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"gopher-camp/pkg/types"
 	"log"
 	"time"
 )
@@ -20,12 +21,11 @@ func (l CustomLogger) LogInfo(msg string, src string, pkg string) {
 	log.Println(logMsg)
 }
 
-func (l CustomLogger) LogError(err error, src string, pkg string) {
-	logMsg := fmt.Sprintf("source=%v, error=%v, file=%v, date=%v",
-		src,
+func (l CustomLogger) LogError(err types.CustomError) {
+	logMsg := fmt.Sprintf("source=%v, error=%v, date=%v",
+		err.Source,
 		err,
-		pkg,
-		dateNow,
+		err.DateTime,
 	)
 	log.Println(logMsg)
 }

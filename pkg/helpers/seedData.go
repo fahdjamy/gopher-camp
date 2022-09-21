@@ -9,12 +9,12 @@ import (
 )
 
 func SeedDatabaseData(logger types.Logger, services types.AllServices) error {
+	logger.LogInfo("**** Seeding Data *****", "", "")
 	if err := services.Validate(); err != nil {
 		return err
 	}
 	foundersData, err := readFounders()
 	if err != nil {
-		logger.LogError(err, "utils.ReadJsonFile", "utils")
 		return err
 	}
 	if foundersData != nil && len(foundersData) > 0 {
@@ -28,7 +28,6 @@ func SeedDatabaseData(logger types.Logger, services types.AllServices) error {
 
 	companiesData, err := readCompanies(foundersData)
 	if err != nil {
-		logger.LogError(err, "utils.ReadJsonFile", "utils")
 		return err
 	}
 
@@ -45,12 +44,16 @@ func SeedDatabaseData(logger types.Logger, services types.AllServices) error {
 }
 
 func readFounders() ([]*models.Founder, error) {
+	var errSource = "utils.seedData.readFounders"
 	var data []dto.FounderRequest
 	jsonFounders, err := utils.ReadJsonFile(utils.AbsPathToProject("./local/data/founders.json"))
 	if err != nil {
-		return nil, err
+		return nil, createCustomErr(err, errSource)
 	}
 	err = json.Unmarshal(jsonFounders, &data)
+	if err != nil {
+		return nil, createCustomErr(err, errSource)
+	}
 
 	var founders []*models.Founder
 	for _, founder := range data {
@@ -61,16 +64,20 @@ func readFounders() ([]*models.Founder, error) {
 		})
 	}
 
-	return founders, err
+	return founders, nil
 }
 
 func readCompanies(founders []*models.Founder) ([]*models.Company, error) {
+	var errSource = "utils.seedData.readCompanies"
 	var data []dto.CompanyRequest
 	jsonCompanies, err := utils.ReadJsonFile(utils.AbsPathToProject("./local/data/companies.json"))
 	if err != nil {
-		return nil, err
+		return nil, createCustomErr(err, errSource)
 	}
 	err = json.Unmarshal(jsonCompanies, &data)
+	if err != nil {
+		return nil, createCustomErr(err, errSource)
+	}
 
 	var companies []*models.Company
 
@@ -87,6 +94,13 @@ func readCompanies(founders []*models.Founder) ([]*models.Company, error) {
 	}
 
 	return companies, err
+}
+
+func createCustomErr(err error, source string) types.CustomError {
+	cErr := types.NewCustomError()
+	cErr.Source = source
+	cErr.Err = err
+	return *cErr
 }
 
 func findFounder(index int, founders []*models.Founder) *models.Founder {

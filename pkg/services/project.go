@@ -1,19 +1,21 @@
 package services
 
 import (
-	"errors"
 	"fmt"
 	"gopher-camp/pkg/models"
 	"gopher-camp/pkg/storage/database"
 	"gopher-camp/pkg/types"
 	"gopher-camp/pkg/types/dto"
 	"gorm.io/gorm"
+	"time"
 )
+
+var errorSource = "service.projectServices"
 
 type ProjectService struct {
 	db        *gorm.DB
 	logger    types.Logger
-	coService types.Storage[models.Company]
+	coService types.DOServiceProvider[models.Company]
 }
 
 func (p ProjectService) FindAll() []models.Project {
@@ -24,8 +26,14 @@ func (p ProjectService) FindAll() []models.Project {
 }
 
 func (p ProjectService) Delete(id uint) (bool, error) {
-	//TODO implement me
-	panic("implement me")
+	project, err := p.FindById(id)
+	if err != nil {
+		cErr := types.CustomError{Err: err}
+		return false, cErr
+	}
+	p.db.Delete(project)
+
+	return true, nil
 }
 
 func (p ProjectService) FindById(id uint) (*models.Project, error) {
@@ -33,7 +41,11 @@ func (p ProjectService) FindById(id uint) (*models.Project, error) {
 	rec := p.db.Where("id = ?", id).Limit(1).Find(project)
 
 	if rec.RowsAffected == 0 {
-		return nil, errors.New(fmt.Sprintf("project with id (%v) does not exist", id))
+		return nil, types.CustomError{
+			DateTime: time.Now(),
+			Source:   fmt.Sprintf("%v.%v", errorSource, "Create"),
+			Message:  fmt.Sprintf("project with id (%v) does not exist", id),
+		}
 	}
 
 	return project, nil
@@ -44,7 +56,11 @@ func (p ProjectService) Create(newProject *models.Project) (*models.Project, err
 
 	companyResponse, err := p.coService.FindById(newProject.CompanyID)
 	if err != nil {
-		return nil, err
+		return nil, types.CustomError{
+			Err:      err,
+			DateTime: time.Now(),
+			Source:   fmt.Sprintf("%v.%v", errorSource, "Create"),
+		}
 	}
 
 	project.CompanyID = companyResponse.ID
@@ -60,7 +76,7 @@ func (p ProjectService) Update(id uint, project *models.Project) (*models.Projec
 	panic("implement me")
 }
 
-func NewProjectService(db database.Database, logger types.Logger, coService types.Storage[models.Company]) ProjectService {
+func NewProjectService(db database.Database, logger types.Logger, coService types.DOServiceProvider[models.Company]) ProjectService {
 	return ProjectService{
 		db:        db.GetDB(),
 		logger:    logger,

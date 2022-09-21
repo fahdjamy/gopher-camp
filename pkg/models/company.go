@@ -15,7 +15,7 @@ type Company struct {
 	UpdatedAt time.Time `json:"updatedAt,omitempty"`
 }
 
-func (c Company) Me() string {
+func (c Company) ToString() string {
 	companyStr := fmt.Sprintf("Company: %v founded by %v", c.Name, c.Founder)
 	return companyStr
 }

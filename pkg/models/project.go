@@ -14,7 +14,7 @@ type Project struct {
 	CompanyID   uint      `json:"company" gorm:"constraint:OnUpdate:CASCADE"`
 }
 
-func (p Project) Me() string {
+func (p Project) ToString() string {
 	me := fmt.Sprintf("%v with id: %d", p.Name, p.ID)
 	return me
 }

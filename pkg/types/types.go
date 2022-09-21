@@ -2,13 +2,15 @@ package types
 
 import (
 	"errors"
+	"fmt"
 	"gopher-camp/pkg/models"
+	"time"
 )
 
 type AllServices struct {
-	CompanyService Storage[models.Company]
-	FounderService Storage[models.Founder]
-	ProjectService Storage[models.Project]
+	CompanyService DOServiceProvider[models.Company]
+	FounderService DOServiceProvider[models.Founder]
+	ProjectService DOServiceProvider[models.Project]
 }
 
 func (as AllServices) Validate() error {
@@ -23,4 +25,28 @@ func (as AllServices) Validate() error {
 	}
 
 	return nil
+}
+
+type CustomError struct {
+	Err      error
+	Source   string
+	Message  string
+	DateTime time.Time
+}
+
+func (e CustomError) Error() string {
+	errStr := ""
+	if e.Err != nil {
+		errStr = errStr + e.Err.Error()
+	}
+	return fmt.Sprintf("[source]:%v [error]: %v", e.Source, errStr)
+}
+
+func NewCustomError() *CustomError {
+	return &CustomError{
+		Err:      nil,
+		Source:   "hidden",
+		Message:  "error",
+		DateTime: time.Now(),
+	}
 }

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"gopher-camp/pkg/constants"
+	"gopher-camp/pkg/types"
 	"time"
 )
 
@@ -36,16 +37,16 @@ func SuccessArray[T any](data []T, msg string) ArrayResponse[T] {
 	}
 }
 
-func CreateFailure(err error) ErrorData {
+func CreateFailure(err types.CustomError) ErrorData {
 	return ErrorData{
-		Date:  DateTime(time.Now(), constants.DateTimeResponseFormat),
+		Date:  DateTime(err.DateTime, constants.DateTimeResponseFormat),
 		Error: err.Error(),
 	}
 }
 
-func CreateFailureWithMessage(err error, message string) ErrorWithMessage {
+func CreateFailureWithMessage(err types.CustomError) ErrorWithMessage {
 	return ErrorWithMessage{
-		Message: message,
+		Message: err.Message,
 		Error:   CreateFailure(err),
 	}
 }

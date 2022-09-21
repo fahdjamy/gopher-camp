@@ -16,7 +16,7 @@ type Founder struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-func (f Founder) Me() string {
+func (f Founder) ToString() string {
 	str := fmt.Sprintf("Name: %v LinkedIn by %v", f.Name, f.LinkedIn)
 	return str
 }

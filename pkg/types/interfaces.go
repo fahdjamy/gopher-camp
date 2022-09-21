@@ -6,13 +6,13 @@ import (
 )
 
 type Domain interface {
-	Me() string
+	ToString() string
 	Validate() error
 }
 
 type Logger interface {
+	LogError(err CustomError)
 	LogInfo(msg string, src string, pkg string)
-	LogError(err error, src string, pkg string)
 }
 
 type DTOMapper[T models.Model, R any] interface {
@@ -27,10 +27,21 @@ type RestRouters interface {
 	Delete(path string, handler http.HandlerFunc)
 }
 
-type Storage[T models.Model] interface {
+// DOServiceProvider stands for Domain Object Service Provider
+type DOServiceProvider[T models.Model] interface {
 	FindAll() []T
 	Delete(id uint) (bool, error)
 	FindById(id uint) (*T, error)
 	Create(model *T) (*T, error)
 	Update(id uint, model *T) (*T, error)
+}
+
+type StorageProvider[T models.Model] interface {
+	DeleteOne(table string, domainID int) error
+	DeleteMany(table string, domainID int) error
+	Update(table string, domain Domain) *T
+	FindOne(table string, criteria string) *T
+	InsertOne(table string, domain Domain) *T
+	FindMany(table string, criteria string) []*T
+	InsertMany(table string, domains ...Domain) []*T
 }
