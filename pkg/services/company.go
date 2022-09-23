@@ -1,15 +1,16 @@
 package services
 
 import (
-	"errors"
 	"fmt"
 	"gopher-camp/pkg/models"
 	"gopher-camp/pkg/storage/database"
 	"gopher-camp/pkg/types"
 	"gorm.io/gorm"
-	"log"
 	"strings"
+	"time"
 )
+
+var coServiceErrSrc = "service.company"
 
 type CompanyService struct {
 	db     *gorm.DB
@@ -24,24 +25,32 @@ func (c CompanyService) FindAll() []models.Company {
 }
 
 func (c CompanyService) Delete(id uint) (bool, error) {
-	//TODO implement me
-	panic("implement me")
+	company, err := c.FindById(id)
+	if err != nil {
+		return false, err
+	}
+
+	c.db.Delete(company)
+	return true, nil
 }
 
 func (c CompanyService) FindById(id uint) (*models.Company, error) {
-	log.Println(id)
 	company := &models.Company{}
 	rec := c.db.Where("id = ?", id).First(company)
 
 	if rec.RowsAffected == 0 {
-		return nil, errors.New(fmt.Sprintf("company with id (%v) does not exist", id))
+		return nil, c.createErr(nil, fmt.Sprintf("company with id (%v) does not exist", id))
 	}
 	return company, nil
 }
 
 func (c CompanyService) Create(model *models.Company) (*models.Company, error) {
+	err := model.Validate()
+	if err != nil {
+		return nil, c.createErr(err, "")
+	}
 	if c.findByName(model.Name) != nil {
-		return nil, errors.New("name must be unique")
+		return nil, c.createErr(err, "name must be unique")
 	}
 	model.Name = strings.ToLower(model.Name)
 
@@ -63,6 +72,15 @@ func (c CompanyService) findByName(name string) *models.Company {
 		return &company
 	}
 	return nil
+}
+
+func (c CompanyService) createErr(err error, msg string) error {
+	return types.CustomError{
+		Err:      err,
+		Message:  msg,
+		DateTime: time.Now(),
+		Source:   fmt.Sprintf("%v.%v", coServiceErrSrc, "Create"),
+	}
 }
 
 func NewCompanyService(db database.Database, logger types.Logger) CompanyService {

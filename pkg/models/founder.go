@@ -1,7 +1,9 @@
 package models
 
 import (
+	"errors"
 	"fmt"
+	"gopher-camp/pkg/constants"
 	"gopher-camp/pkg/validators"
 	"time"
 )
@@ -16,17 +18,34 @@ type Founder struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-func (f Founder) ToString() string {
+func (f *Founder) ToString() string {
 	str := fmt.Sprintf("Name: %v LinkedIn by %v", f.Name, f.LinkedIn)
 	return str
 }
 
-func (f Founder) Validate() error {
-	_, err := validators.ValidateEmail(f.Email)
-	if err != nil {
-		return err
+func (f *Founder) Validate() error {
+	if f.Name == "" {
+		return errors.New(fmt.Sprintf(constants.EmptyFieldErrorTmp, "Name"))
+	}
+	minSize := 2
+	maxSize := 150
+	if len(f.Name) < minSize || len(f.Name) > maxSize {
+		return errors.New(fmt.Sprintf(fmt.Sprintf(constants.OutOfSizeValueErrorTmp, "Name", minSize, maxSize)))
+	}
+	if f.Email != "" {
+		_, err := validators.ValidateEmail(f.Email)
+		if err != nil {
+			return errors.New("invalid Email")
+		}
+	}
+	if f.LinkedIn == "" {
+		return errors.New(fmt.Sprintf(constants.EmptyFieldErrorTmp, "LinkedIn"))
 	}
 	return nil
+}
+
+func (f *Founder) Me() *Founder {
+	return f
 }
 
 func NewFounder() *Founder {

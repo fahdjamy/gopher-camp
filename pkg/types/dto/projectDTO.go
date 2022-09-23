@@ -6,8 +6,8 @@ import (
 
 type ProjectReqDTO struct {
 	Name        string `json:"name"`
-	Description string `json:"description"`
 	CompanyId   int    `json:"companyId"`
+	Description string `json:"description"`
 }
 
 func (p *ProjectReqDTO) GetDTO() ProjectReqDTO {

@@ -5,9 +5,10 @@ import (
 	"net/http"
 )
 
-type Domain interface {
+type Domain[T Model] interface {
 	ToString() string
 	Validate() error
+	Me() *T
 }
 
 type Logger interface {
@@ -15,7 +16,7 @@ type Logger interface {
 	LogInfo(msg string, src string, pkg string)
 }
 
-type DTOMapper[T models.Model, R any] interface {
+type DTOMapper[T Model, R any] interface {
 	GetDTO() R
 	MapToDO(domain *T) *T
 }
@@ -28,7 +29,7 @@ type RestRouters interface {
 }
 
 // DOServiceProvider stands for Domain Object Service Provider
-type DOServiceProvider[T models.Model] interface {
+type DOServiceProvider[T Model] interface {
 	FindAll() []T
 	Delete(id uint) (bool, error)
 	FindById(id uint) (*T, error)
@@ -36,12 +37,16 @@ type DOServiceProvider[T models.Model] interface {
 	Update(id uint, model *T) (*T, error)
 }
 
-type StorageProvider[T models.Model] interface {
-	DeleteOne(table string, domainID int) error
-	DeleteMany(table string, domainID int) error
-	Update(table string, domain Domain) *T
+type StorageProvider[T Model] interface {
+	DeleteOne(table string, id int) error
+	DeleteMany(table string, id int) error
+	Update(table string, domain Domain[T]) *T
 	FindOne(table string, criteria string) *T
-	InsertOne(table string, domain Domain) *T
+	InsertOne(table string, domain Domain[T]) *T
 	FindMany(table string, criteria string) []*T
-	InsertMany(table string, domains ...Domain) []*T
+	InsertMany(table string, domains ...Domain[T]) []*T
+}
+
+type Model interface {
+	models.Project | models.Company | models.Founder
 }

@@ -28,18 +28,18 @@ func (as AllServices) Validate() error {
 }
 
 type CustomError struct {
-	Err      error
-	Source   string
-	Message  string
-	DateTime time.Time
+	Err      error     `json:"error,omitempty"`
+	Source   string    `json:"source,omitempty"`
+	Message  string    `json:"errorMessage,omitempty"`
+	DateTime time.Time `json:"dateTime,omitempty"`
 }
 
 func (e CustomError) Error() string {
-	errStr := ""
-	if e.Err != nil {
-		errStr = errStr + e.Err.Error()
+	errStr := e.Message
+	if errStr == "" && e.Err != nil {
+		errStr = e.Err.Error()
 	}
-	return fmt.Sprintf("[source]:%v [error]: %v", e.Source, errStr)
+	return fmt.Sprintf(errStr)
 }
 
 func NewCustomError() *CustomError {

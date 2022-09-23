@@ -12,13 +12,14 @@ type ArrayResponse[T any] struct {
 }
 
 type ErrorData struct {
-	Error string `json:"error"`
-	Date  string `json:"datetime"`
+	Error  error  `json:"error"`
+	Source string `json:"source"`
+	Date   string `json:"datetime"`
 }
 
 type ErrorWithMessage struct {
-	Error   ErrorData `json:"error"`
-	Message string    `json:"message"`
+	Message    string    `json:"message"`
+	StackTrace ErrorData `json:"stackTrace"`
 }
 
 type DataResponse[T any] struct {
@@ -39,15 +40,20 @@ func SuccessArray[T any](data []T, msg string) ArrayResponse[T] {
 
 func CreateFailure(err types.CustomError) ErrorData {
 	return ErrorData{
-		Date:  DateTime(err.DateTime, constants.DateTimeResponseFormat),
-		Error: err.Error(),
+		Error:  err.Err,
+		Source: err.Source,
+		Date:   DateTime(err.DateTime, constants.DateTimeResponseFormat),
 	}
 }
 
 func CreateFailureWithMessage(err types.CustomError) ErrorWithMessage {
+	errMsg := err.Message
+	if errMsg == "" {
+		errMsg = err.Err.Error()
+	}
 	return ErrorWithMessage{
-		Message: err.Message,
-		Error:   CreateFailure(err),
+		Message:    errMsg,
+		StackTrace: CreateFailure(err),
 	}
 }
 

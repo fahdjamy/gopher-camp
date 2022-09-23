@@ -74,11 +74,7 @@ func (pc ProjectController) CreateProject(w http.ResponseWriter, r *http.Request
 	}
 	res, _ := json.Marshal(utils.SingleObject(pc.convertToProject(*project)))
 	w.WriteHeader(http.StatusOK)
-	_, err = w.Write(res)
-	if err != nil {
-		w.WriteHeader(http.StatusBadGateway)
-		return
-	}
+	_, _ = w.Write(res)
 }
 
 func (pc ProjectController) GetProject(w http.ResponseWriter, r *http.Request) {

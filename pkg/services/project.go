@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-var errorSource = "service.projectServices"
+var prjSrvErrSrc = "service.projectServices"
 
 type ProjectService struct {
 	db        *gorm.DB
@@ -20,7 +20,7 @@ type ProjectService struct {
 
 func (p ProjectService) FindAll() []models.Project {
 	var projects []models.Project
-	p.db.Preload("Companies").Find(&projects)
+	p.db.Find(&projects)
 
 	return projects
 }
@@ -28,8 +28,7 @@ func (p ProjectService) FindAll() []models.Project {
 func (p ProjectService) Delete(id uint) (bool, error) {
 	project, err := p.FindById(id)
 	if err != nil {
-		cErr := types.CustomError{Err: err}
-		return false, cErr
+		return false, p.createErr(err, "", "")
 	}
 	p.db.Delete(project)
 
@@ -41,39 +40,50 @@ func (p ProjectService) FindById(id uint) (*models.Project, error) {
 	rec := p.db.Where("id = ?", id).Limit(1).Find(project)
 
 	if rec.RowsAffected == 0 {
-		return nil, types.CustomError{
-			DateTime: time.Now(),
-			Source:   fmt.Sprintf("%v.%v", errorSource, "Create"),
-			Message:  fmt.Sprintf("project with id (%v) does not exist", id),
-		}
+		return nil, p.createErr(
+			nil,
+			fmt.Sprintf("project with id (%v) does not exist", id),
+			fmt.Sprintf("%v.%v", prjSrvErrSrc, "Create"),
+		)
 	}
 
 	return project, nil
 }
 
-func (p ProjectService) Create(newProject *models.Project) (*models.Project, error) {
-	project := models.NewProject()
-
-	companyResponse, err := p.coService.FindById(newProject.CompanyID)
+func (p ProjectService) Create(project *models.Project) (*models.Project, error) {
+	err := project.Validate()
 	if err != nil {
-		return nil, types.CustomError{
-			Err:      err,
-			DateTime: time.Now(),
-			Source:   fmt.Sprintf("%v.%v", errorSource, "Create"),
-		}
+		return nil, p.createErr(err, "", fmt.Sprintf("%v.%v", prjSrvErrSrc, "Create"))
+	}
+	company, err := p.coService.FindById(project.CompanyID)
+	if err != nil {
+		return nil, p.createErr(err, "", fmt.Sprintf("%v.%v", prjSrvErrSrc, "Create"))
 	}
 
-	project.CompanyID = companyResponse.ID
+	project.CompanyID = company.ID
 
 	p.db.Create(project)
-	p.db.Preload("Companies").Find(project)
+	p.db.Find(project)
 
-	return newProject, nil
+	return project, nil
 }
 
 func (p ProjectService) Update(id uint, project *models.Project) (*models.Project, error) {
 	//TODO implement me
 	panic("implement me")
+}
+
+func (p ProjectService) createErr(err error, msg string, src string) error {
+	customErr := types.CustomError{
+		Err:      err,
+		Source:   src,
+		Message:  msg,
+		DateTime: time.Now(),
+	}
+	if src == "" {
+		customErr.Source = prjSrvErrSrc
+	}
+	return customErr
 }
 
 func NewProjectService(db database.Database, logger types.Logger, coService types.DOServiceProvider[models.Company]) ProjectService {
