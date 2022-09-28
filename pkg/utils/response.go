@@ -7,8 +7,10 @@ import (
 )
 
 type ArrayResponse[T any] struct {
-	Message string `json:"message"`
-	Data    []T    `json:"data"`
+	TotalCount int    `json:"totalCount"`
+	ItemCount  int    `json:"itemCount"`
+	Message    string `json:"message"`
+	Data       []T    `json:"data"`
 }
 
 type ErrorData struct {
@@ -27,14 +29,16 @@ type DataResponse[T any] struct {
 	Date string `json:"datetime"`
 }
 
-func SuccessArray[T any](data []T, msg string) ArrayResponse[T] {
+func SuccessArray[T any](data []T, msg string, totalCnt int) ArrayResponse[T] {
 	var response = make([]T, 0)
 	if data != nil {
 		response = data
 	}
 	return ArrayResponse[T]{
-		Message: msg,
-		Data:    response,
+		Message:    msg,
+		Data:       response,
+		ItemCount:  len(data),
+		TotalCount: totalCnt,
 	}
 }
 

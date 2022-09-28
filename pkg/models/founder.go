@@ -11,6 +11,7 @@ import (
 type Founder struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
 	Name      string    `json:"name"`
+	Deleted   bool      `json:"deleted"`
 	CompanyID uint      `gorm:"constraint:OnUpdate:CASCADE"`
 	Email     string    `json:"founder"`
 	LinkedIn  string    `json:"linkedIn"`

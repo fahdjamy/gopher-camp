@@ -26,6 +26,7 @@ type ProjectResponse struct {
 	ID          uint            `json:"id"`
 	Name        string          `json:"name"`
 	Company     CompanyResponse `json:"company"`
+	Deleted     bool            `json:"deleted"`
 	Description string          `json:"description"`
 	LastUpdated string          `json:"lastUpdated"`
 }

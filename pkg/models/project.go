@@ -10,6 +10,7 @@ import (
 type Project struct {
 	ID          uint      `gorm:"primaryKey" json:"id"`
 	Name        string    `json:"name"`
+	Deleted     bool      `json:"deleted"`
 	Description string    `json:"description"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
@@ -23,13 +24,13 @@ func (p *Project) ToString() string {
 
 func (p *Project) Validate() error {
 	if p.Name == "" {
-		return errors.New(fmt.Sprintf(constants.EmptyFieldErrorTmp, "LinkedIn"))
+		return errors.New(fmt.Sprintf(constants.EmptyFieldErrorTmp, "Name"))
 	}
 	if len(p.Name) <= 1 || len(p.Name) > 150 {
 		return errors.New("name size should be between 2 and 150")
 	}
 	if p.Description == "" {
-		return errors.New(fmt.Sprintf(constants.EmptyFieldErrorTmp, "LinkedIn"))
+		return errors.New(fmt.Sprintf(constants.EmptyFieldErrorTmp, "Description"))
 	}
 	minSize := 10
 	maxSize := 300

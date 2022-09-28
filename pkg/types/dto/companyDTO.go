@@ -4,8 +4,9 @@ import "gopher-camp/pkg/models"
 
 type CompanyResponse struct {
 	ID          uint              `json:"id"`
-	Name        string            `json:"name"`
-	Founder     []FounderResponse `json:"founder"`
+	Name        string            `json:"name,omitempty"`
+	Deleted     bool              `json:"deleted"`
+	Founder     []FounderResponse `json:"founder,omitempty"`
 	Website     string            `json:"website"`
 	LastUpdated string            `json:"lastUpdated"`
 }

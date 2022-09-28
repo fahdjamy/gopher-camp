@@ -18,6 +18,7 @@ type Company struct {
 	StartDate time.Time `json:"startDate,omitempty"`
 	EndDate   time.Time `json:"endDate,omitempty"`
 	UpdatedAt time.Time `json:"updatedAt,omitempty"`
+	Deleted   bool      `json:"deleted,omitempty"`
 }
 
 func (c *Company) ToString() string {
