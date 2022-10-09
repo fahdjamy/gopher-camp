@@ -21,6 +21,7 @@ type Profile struct {
 	Youtube   string    `json:"youtube',omitempty"`
 	CreatedAt time.Time `json:"createdAt,omitempty"`
 	UpdatedAt time.Time `json:"updatedAt,omitempty"`
+	Deleted   bool      `json:"deleted"`
 }
 
 func (prof *Profile) ToString() string {

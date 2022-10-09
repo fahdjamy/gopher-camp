@@ -2,34 +2,55 @@ package utils
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
+	"gopher-camp/pkg/constants"
 	"gopher-camp/pkg/types"
-	"log"
-	"time"
 )
 
 type CustomLogger struct{}
 
-var dateNow = time.Now()
+var logger = logrus.New()
 
-func (l CustomLogger) LogInfo(msg string, src string, pkg string) {
-	logMsg := fmt.Sprintf("source=%v, message=%v, pakage=%v, date=%v",
-		src,
-		msg,
-		pkg,
-		dateNow,
-	)
-	log.Println(logMsg)
+func (l *CustomLogger) Warn(err error) {
+	logger.Warnln(err)
 }
 
-func (l CustomLogger) LogError(err types.CustomError) {
+func (l *CustomLogger) Trace(err error) {
+	logger.Traceln(err)
+}
+
+func (l *CustomLogger) Fatal(err error) {
+	logger.Fatalln(err)
+}
+
+func (l *CustomLogger) Error(err error) {
+	logger.Errorln(err)
+}
+
+func (l *CustomLogger) Debug(err error) {
+	logger.Debugln(err)
+}
+
+func (l *CustomLogger) Info(msg string) {
+	logger.Info(msg)
+}
+
+func (l *CustomLogger) CustomError(err types.CustomError) {
 	logMsg := fmt.Sprintf("source=%v, error=%v, date=%v",
 		err.Source,
 		err,
 		err.DateTime,
 	)
-	log.Println(logMsg)
+	logger.Error(logMsg)
 }
 
-func NewCustomLogger() CustomLogger {
-	return CustomLogger{}
+func NewCustomLogger(level constants.LogLevel) *CustomLogger {
+	//logger.SetLevel(logrus.Level(level))
+	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger.SetFormatter(&logrus.TextFormatter{
+		//DisableColors: true,
+		FullTimestamp: true,
+	})
+
+	return &CustomLogger{}
 }

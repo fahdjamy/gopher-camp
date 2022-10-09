@@ -7,20 +7,18 @@ import (
 	"gopher-camp/pkg/env"
 	"gopher-camp/pkg/helpers"
 	muxServer "gopher-camp/pkg/http/rest/mux"
-	"gopher-camp/pkg/models"
 	"gopher-camp/pkg/routes"
 	"gopher-camp/pkg/services"
 	"gopher-camp/pkg/storage/database"
 	"gopher-camp/pkg/types"
 	"gopher-camp/pkg/utils"
-	"log"
 	"net/http"
 	"time"
 )
 
 func main() {
 	port := constants.HostPort()
-	logger := utils.NewCustomLogger()
+	logger := utils.NewCustomLogger(constants.InfoLevel)
 	address := fmt.Sprintf("127.0.0.1%v", port)
 	muxSrv, srv := muxServer.NewMuxServer(address, 15*time.Second, 15*time.Second)
 
@@ -35,9 +33,9 @@ func main() {
 	}
 	db.OpenPostgresConn(dbConfig)
 
-	err := models.MigrateAllModels(db)
+	err := helpers.MigrateAllModels(db, logger)
 	if err != nil {
-		logger.LogError(types.CustomError{
+		logger.CustomError(types.CustomError{
 			Err:      err,
 			DateTime: time.Now(),
 			Source:   "tables.MigrateAllModels",
@@ -57,7 +55,7 @@ func main() {
 	}
 	err = helpers.SeedDatabaseData(logger, allServices)
 	if err != nil {
-		logger.LogError(types.CustomError{
+		logger.CustomError(types.CustomError{
 			Err:      err,
 			DateTime: time.Now(),
 			Source:   "helpers.SeedDatabaseData",
@@ -67,6 +65,7 @@ func main() {
 	muxSrv.Router.Handle("/", fileServer)
 	routes.RegisterProjectRoutes(muxSrv, allServices)
 
-	fmt.Printf("Starting server on port " + port + "\n")
-	log.Fatal(srv.ListenAndServe())
+	logger.Info("Starting server on port " + port + "\n")
+
+	logger.Fatal(srv.ListenAndServe())
 }

@@ -19,3 +19,12 @@ func HostPort() string {
 var DateResponseFormat = "Jan 2, 2006"
 var DateTimeResponseFormat = "Jan 2, 2006 15:04"
 var DateTimeMinSecResponseFormat = "Jan 2, 2006 15:04:05"
+
+type LogLevel uint
+
+const (
+	ErrorLevel LogLevel = iota
+	InfoLevel
+	TraceLevel
+	WarningLevel
+)

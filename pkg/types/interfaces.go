@@ -12,8 +12,13 @@ type Domain[T Model] interface {
 }
 
 type Logger interface {
-	LogError(err CustomError)
-	LogInfo(msg string, src string, pkg string)
+	Info(msg string)
+	Warn(err error)
+	Fatal(err error)
+	Trace(err error)
+	Error(err error)
+	Debug(err error)
+	CustomError(err CustomError)
 }
 
 type DTOMapper[T Model, R any] interface {

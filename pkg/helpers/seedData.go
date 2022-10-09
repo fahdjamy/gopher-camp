@@ -9,7 +9,7 @@ import (
 )
 
 func SeedDatabaseData(logger types.Logger, services types.AllServices) error {
-	logger.LogInfo("**** Seeding Data *****", "", "")
+	logger.Info("**** Seeding Data *****")
 	if err := services.Validate(); err != nil {
 		return err
 	}
