@@ -1,0 +1,9 @@
+[please]
+version = 16.22.1
+
+[go]
+importpath = gopher-camp
+gopath = /usr/local/bin
+
+[build]
+path = /usr/local/go/bin:/usr/local/bin:/usr/bin:/bin
