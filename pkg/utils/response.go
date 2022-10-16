@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"gopher-camp/pkg/constants"
-	"gopher-camp/pkg/types"
+	"profiler/pkg/constants"
+	"profiler/pkg/types"
 	"time"
 )
 

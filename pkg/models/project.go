@@ -3,7 +3,7 @@ package models
 import (
 	"errors"
 	"fmt"
-	"gopher-camp/pkg/constants"
+	"profiler/pkg/constants"
 	"time"
 )
 

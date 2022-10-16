@@ -1,7 +1,7 @@
 package constants
 
 import (
-	"gopher-camp/pkg/env"
+	"profiler/pkg/env"
 )
 
 var DBName = "DATABASE_NAME"

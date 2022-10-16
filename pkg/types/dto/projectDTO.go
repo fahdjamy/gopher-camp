@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"gopher-camp/pkg/models"
+	"profiler/pkg/models"
 )
 
 type ProjectReqDTO struct {

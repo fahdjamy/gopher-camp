@@ -1,8 +1,8 @@
 package types
 
 import (
-	"gopher-camp/pkg/models"
 	"net/http"
+	"profiler/pkg/models"
 )
 
 type Domain[T Model] interface {

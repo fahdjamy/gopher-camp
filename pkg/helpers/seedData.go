@@ -2,10 +2,10 @@ package helpers
 
 import (
 	"encoding/json"
-	"gopher-camp/pkg/models"
-	"gopher-camp/pkg/types"
-	"gopher-camp/pkg/types/dto"
-	"gopher-camp/pkg/utils"
+	"profiler/pkg/models"
+	"profiler/pkg/types"
+	"profiler/pkg/types/dto"
+	"profiler/pkg/utils"
 )
 
 func SeedDatabaseData(logger types.Logger, services types.AllServices) error {

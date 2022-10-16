@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"gopher-camp/pkg/models"
-	"gopher-camp/pkg/types/dto"
+	"profiler/pkg/models"
+	"profiler/pkg/types/dto"
 )
 
 func CompanyToCompanyRespDTO(company models.Company) dto.CompanyResponse {

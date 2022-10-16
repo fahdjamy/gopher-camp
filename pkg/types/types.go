@@ -3,7 +3,7 @@ package types
 import (
 	"errors"
 	"fmt"
-	"gopher-camp/pkg/models"
+	"profiler/pkg/models"
 	"time"
 )
 

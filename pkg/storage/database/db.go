@@ -2,10 +2,10 @@ package database
 
 import (
 	"fmt"
-	"gopher-camp/pkg/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
+	"profiler/pkg/config"
 )
 
 type Database struct {

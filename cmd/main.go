@@ -2,17 +2,17 @@ package main
 
 import (
 	"fmt"
-	"gopher-camp/pkg/config"
-	"gopher-camp/pkg/constants"
-	"gopher-camp/pkg/env"
-	"gopher-camp/pkg/helpers"
-	muxServer "gopher-camp/pkg/http/rest/mux"
-	"gopher-camp/pkg/routes"
-	"gopher-camp/pkg/services"
-	"gopher-camp/pkg/storage/database"
-	"gopher-camp/pkg/types"
-	"gopher-camp/pkg/utils"
 	"net/http"
+	"profiler/pkg/config"
+	"profiler/pkg/constants"
+	"profiler/pkg/env"
+	"profiler/pkg/helpers"
+	muxServer "profiler/pkg/http/rest/mux"
+	"profiler/pkg/routes"
+	"profiler/pkg/services"
+	"profiler/pkg/storage/database"
+	"profiler/pkg/types"
+	"profiler/pkg/utils"
 	"time"
 )
 

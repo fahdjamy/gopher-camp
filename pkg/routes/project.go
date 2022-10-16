@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"gopher-camp/pkg/controllers"
-	"gopher-camp/pkg/types"
+	"profiler/pkg/controllers"
+	"profiler/pkg/types"
 )
 
 var RegisterProjectRoutes = func(routers types.RestRouters, services types.AllServices) {

@@ -1,6 +1,6 @@
 package dto
 
-import "gopher-camp/pkg/models"
+import "profiler/pkg/models"
 
 type CompanyResponse struct {
 	ID          uint              `json:"id"`

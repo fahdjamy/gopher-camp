@@ -3,10 +3,10 @@ package services
 import (
 	"errors"
 	"fmt"
-	"gopher-camp/pkg/models"
-	"gopher-camp/pkg/storage/database"
-	"gopher-camp/pkg/types"
 	"gorm.io/gorm"
+	"profiler/pkg/models"
+	"profiler/pkg/storage/database"
+	"profiler/pkg/types"
 	"strings"
 )
 

@@ -1,9 +1,9 @@
 package helpers
 
 import (
-	"gopher-camp/pkg/models"
-	"gopher-camp/pkg/storage/database"
-	"gopher-camp/pkg/types"
+	"profiler/pkg/models"
+	"profiler/pkg/storage/database"
+	"profiler/pkg/types"
 )
 
 func MigrateFounder(database *database.Database, logger types.Logger) error {

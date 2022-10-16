@@ -3,12 +3,12 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"gopher-camp/pkg/constants"
-	"gopher-camp/pkg/models"
-	"gopher-camp/pkg/types"
-	"gopher-camp/pkg/types/dto"
-	"gopher-camp/pkg/utils"
 	"net/http"
+	"profiler/pkg/constants"
+	"profiler/pkg/models"
+	"profiler/pkg/types"
+	"profiler/pkg/types/dto"
+	"profiler/pkg/utils"
 	"strconv"
 	"strings"
 )

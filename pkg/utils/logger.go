@@ -3,8 +3,8 @@ package utils
 import (
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"gopher-camp/pkg/constants"
-	"gopher-camp/pkg/types"
+	"profiler/pkg/constants"
+	"profiler/pkg/types"
 )
 
 type CustomLogger struct{}
