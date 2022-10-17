@@ -11,8 +11,8 @@ type FounderResponse struct {
 
 type FounderRequest struct {
 	Name     string `json:"name"`
-	Email    string `json:"email'"`
 	LinkedIn string `json:"linkedIn"`
+	Email    string `json:"email"`
 }
 
 func (f *FounderRequest) GetDTO() FounderRequest {

@@ -1,7 +1,6 @@
 package services
 
 import (
-	"errors"
 	"fmt"
 	"gorm.io/gorm"
 	"profiler/pkg/models"
@@ -38,14 +37,14 @@ func (f FounderService) FindById(id uint) (*models.Founder, error) {
 	rec := f.db.Where("id = ?", id).First(founder)
 
 	if rec.RowsAffected == 0 {
-		return nil, errors.New(fmt.Sprintf("company with id (%v) does not exist", id))
+		return nil, fmt.Errorf("company with id (%v) does not exist", id)
 	}
 	return founder, nil
 }
 
 func (f FounderService) Create(founder *models.Founder) (*models.Founder, error) {
 	if f.findByName(founder.Name) != nil {
-		return nil, errors.New(fmt.Sprintf("Founder name must be unique, Duplicate name %v", founder.Name))
+		return nil, fmt.Errorf("founder name must be unique, Duplicate name %v", founder.Name)
 	}
 	if f.findByEmail(founder.Email) != nil {
 		cErr := types.NewCustomError()

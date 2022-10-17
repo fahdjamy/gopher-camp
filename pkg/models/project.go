@@ -24,18 +24,18 @@ func (p *Project) ToString() string {
 
 func (p *Project) Validate() error {
 	if p.Name == "" {
-		return errors.New(fmt.Sprintf(constants.EmptyFieldErrorTmp, "Name"))
+		return fmt.Errorf(constants.EmptyFieldErrorTmp, "Name")
 	}
 	if len(p.Name) <= 1 || len(p.Name) > 150 {
 		return errors.New("name size should be between 2 and 150")
 	}
 	if p.Description == "" {
-		return errors.New(fmt.Sprintf(constants.EmptyFieldErrorTmp, "Description"))
+		return fmt.Errorf(constants.EmptyFieldErrorTmp, "Description")
 	}
 	minSize := 10
 	maxSize := 300
 	if len(p.Description) < minSize || len(p.Description) > maxSize {
-		return errors.New(fmt.Sprintf(constants.OutOfSizeValueErrorTmp, "Description", minSize, maxSize))
+		return fmt.Errorf(constants.OutOfSizeValueErrorTmp, "Description", minSize, maxSize)
 	}
 
 	return nil

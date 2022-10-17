@@ -59,7 +59,7 @@ func (p ProjectService) FindByName(name string) (*models.Project, error) {
 	if name == "" {
 		return nil, p.createErr(
 			nil,
-			fmt.Sprintf("name is empty"),
+			"name is empty",
 			fmt.Sprintf("%v.%v", prjSrvErrSrc, "FindByName"),
 		)
 	}

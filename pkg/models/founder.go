@@ -26,12 +26,12 @@ func (f *Founder) ToString() string {
 
 func (f *Founder) Validate() error {
 	if f.Name == "" {
-		return errors.New(fmt.Sprintf(constants.EmptyFieldErrorTmp, "Name"))
+		return fmt.Errorf(fmt.Sprintf(constants.EmptyFieldErrorTmp, "Name"))
 	}
 	minSize := 2
 	maxSize := 150
 	if len(f.Name) < minSize || len(f.Name) > maxSize {
-		return errors.New(fmt.Sprintf(fmt.Sprintf(constants.OutOfSizeValueErrorTmp, "Name", minSize, maxSize)))
+		return fmt.Errorf(constants.OutOfSizeValueErrorTmp, "Name", minSize, maxSize)
 	}
 	if f.Email != "" {
 		_, err := validators.ValidateEmail(f.Email)
@@ -40,7 +40,7 @@ func (f *Founder) Validate() error {
 		}
 	}
 	if f.LinkedIn == "" {
-		return errors.New(fmt.Sprintf(constants.EmptyFieldErrorTmp, "LinkedIn"))
+		return fmt.Errorf(fmt.Sprintf(constants.EmptyFieldErrorTmp, "LinkedIn"))
 	}
 	return nil
 }

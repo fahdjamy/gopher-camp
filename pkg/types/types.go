@@ -2,7 +2,6 @@ package types
 
 import (
 	"errors"
-	"fmt"
 	"profiler/pkg/models"
 	"time"
 )
@@ -39,7 +38,7 @@ func (e CustomError) Error() string {
 	if errStr == "" && e.Err != nil {
 		errStr = e.Err.Error()
 	}
-	return fmt.Sprintf(errStr)
+	return errStr
 }
 
 func NewCustomError() *CustomError {

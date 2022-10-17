@@ -17,12 +17,10 @@ func SeedDatabaseData(logger types.Logger, services types.AllServices) error {
 	if err != nil {
 		return err
 	}
-	if foundersData != nil && len(foundersData) > 0 {
-		for _, fd := range foundersData {
-			_, err := services.FounderService.Create(fd)
-			if err != nil {
-				return err
-			}
+	for _, fd := range foundersData {
+		_, err := services.FounderService.Create(fd)
+		if err != nil {
+			return err
 		}
 	}
 
@@ -31,12 +29,10 @@ func SeedDatabaseData(logger types.Logger, services types.AllServices) error {
 		return err
 	}
 
-	if companiesData != nil && len(companiesData) > 0 {
-		for _, company := range companiesData {
-			_, err := services.CompanyService.Create(company)
-			if err != nil {
-				return err
-			}
+	for _, company := range companiesData {
+		_, err := services.CompanyService.Create(company)
+		if err != nil {
+			return err
 		}
 	}
 

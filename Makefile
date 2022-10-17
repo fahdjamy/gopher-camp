@@ -4,3 +4,7 @@ setup: local
 run-dev:
 	#go build cmd/main.go -o bin/app && ./bin/app
 	go build cmd/main.go && go run cmd/main.go
+
+lint:
+	golangci-lint run
+

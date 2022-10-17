@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"fmt"
 	"profiler/pkg/constants"
 	"profiler/pkg/validators"
@@ -18,7 +17,7 @@ type Profile struct {
 	LinkedIn  string    `json:"linkedIn,omitempty"`
 	Facebook  string    `json:"facebook,omitempty"`
 	Twitter   string    `json:"twitter,omitempty"`
-	Youtube   string    `json:"youtube',omitempty"`
+	Youtube   string    `json:"youtube,omitempty"`
 	CreatedAt time.Time `json:"createdAt,omitempty"`
 	UpdatedAt time.Time `json:"updatedAt,omitempty"`
 	Deleted   bool      `json:"deleted"`
@@ -31,34 +30,34 @@ func (prof *Profile) ToString() string {
 
 func (prof *Profile) Validate() error {
 	if prof.FirstName == "" {
-		return errors.New(fmt.Sprintf(constants.EmptyFieldErrorTmp, "FirstName"))
+		return fmt.Errorf(fmt.Sprintf(constants.EmptyFieldErrorTmp, "FirstName"))
 	}
 	if prof.LastName == "" {
-		return errors.New(fmt.Sprintf(constants.EmptyFieldErrorTmp, "LastName"))
+		return fmt.Errorf(fmt.Sprintf(constants.EmptyFieldErrorTmp, "LastName"))
 	}
 	minSize := 2
 	maxSize := 50
 	if len(prof.FirstName) < minSize || len(prof.FirstName) > maxSize {
-		return errors.New(fmt.Sprintf(constants.OutOfSizeValueErrorTmp, "firstName", minSize, maxSize))
+		return fmt.Errorf(fmt.Sprintf(constants.OutOfSizeValueErrorTmp, "firstName", minSize, maxSize))
 	}
 	if len(prof.LastName) < minSize || len(prof.LastName) > maxSize {
-		return errors.New(fmt.Sprintf(constants.OutOfSizeValueErrorTmp, "lastName", minSize, maxSize))
+		return fmt.Errorf(fmt.Sprintf(constants.OutOfSizeValueErrorTmp, "lastName", minSize, maxSize))
 	}
 	if prof.Email == "" {
-		return errors.New(fmt.Sprintf(constants.EmptyFieldErrorTmp, "Email"))
+		return fmt.Errorf(fmt.Sprintf(constants.EmptyFieldErrorTmp, "Email"))
 	}
 	_, err := validators.ValidateEmail(prof.Email)
 	if err != nil {
-		return errors.New("invalid Email")
+		return fmt.Errorf("invalid Email")
 	}
 
 	minBioSize := 50
 	maxBioSize := 1000
 	if prof.Bio == "" {
-		return errors.New(fmt.Sprintf(constants.EmptyFieldErrorTmp, "Bio"))
+		return fmt.Errorf(fmt.Sprintf(constants.EmptyFieldErrorTmp, "Bio"))
 	}
 	if len(prof.Bio) < minBioSize || len(prof.Bio) > maxBioSize {
-		return errors.New(fmt.Sprintf(constants.OutOfSizeValueErrorTmp, "bio", minSize, maxSize))
+		return fmt.Errorf(fmt.Sprintf(constants.OutOfSizeValueErrorTmp, "bio", minSize, maxSize))
 	}
 
 	return nil

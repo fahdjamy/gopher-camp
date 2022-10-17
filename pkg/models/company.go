@@ -32,15 +32,15 @@ func (c *Company) IsPresent() bool {
 
 func (c *Company) Validate() error {
 	if c.Name == "" {
-		return errors.New(fmt.Sprintf(constants.EmptyFieldErrorTmp, "Name"))
+		return fmt.Errorf(fmt.Sprintf(constants.EmptyFieldErrorTmp, "Name"))
 	}
 	minSize := 2
 	maxSize := 50
 	if len(c.Name) < minSize || len(c.Name) > maxSize {
-		return errors.New(fmt.Sprintf(constants.OutOfSizeValueErrorTmp, "Description", minSize, maxSize))
+		return fmt.Errorf(fmt.Sprintf(constants.OutOfSizeValueErrorTmp, "Description", minSize, maxSize))
 	}
 	if c.Website == "" {
-		return errors.New(fmt.Sprintf(constants.EmptyFieldErrorTmp, "Website"))
+		return fmt.Errorf(fmt.Sprintf(constants.EmptyFieldErrorTmp, "Website"))
 	}
 	if len(c.Founder) == 0 {
 		return errors.New("there should at least be one founder")
