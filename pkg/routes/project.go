@@ -5,7 +5,7 @@ import (
 	"profiler/pkg/types"
 )
 
-var RegisterProjectRoutes = func(routers types.RestRouters, services types.AllServices) {
+var ProjectRoutes = func(routers types.RestRouters, services types.AllServices) {
 	projectController := controllers.NewProjectController(services)
 
 	routers.Get("/projects", projectController.GetProjects)

@@ -33,6 +33,14 @@ func (m Server) Delete(path string, handler http.HandlerFunc) {
 	m.Router.HandleFunc(path, handler).Methods(deleteMethod)
 }
 
+func (m Server) SetSubRoutePrefix(pathPrefix string) {
+	m.Router.PathPrefix(pathPrefix)
+}
+
+func (m Server) ClearSubRoutePrefix() {
+	m.Router.PathPrefix("")
+}
+
 func NewMuxServer(address string, readTimeOut time.Duration, writeTimeOut time.Duration) (Server, *http.Server) {
 	router := mux.NewRouter().StrictSlash(true)
 	muxSvr := Server{

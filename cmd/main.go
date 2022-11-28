@@ -44,6 +44,7 @@ func main() {
 	}
 
 	fileServer := http.FileServer(http.Dir("./static"))
+	profileService := services.NewProfileService(*db, logger)
 	companyService := services.NewCompanyService(*db, logger)
 	founderService := services.NewFounderService(*db, logger)
 	projectService := services.NewProjectService(*db, logger, companyService)
@@ -63,7 +64,9 @@ func main() {
 	}
 
 	muxSrv.Router.Handle("/", fileServer)
-	routes.RegisterProjectRoutes(muxSrv, allServices)
+
+	routes.ProjectRoutes(muxSrv, allServices)
+	routes.ProfileRoutes(muxSrv, profileService)
 
 	logger.Info("Starting server on port " + port + "\n")
 

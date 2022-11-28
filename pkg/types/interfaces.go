@@ -27,6 +27,8 @@ type DTOMapper[T Model, R any] interface {
 }
 
 type RestRouters interface {
+	ClearSubRoutePrefix()
+	SetSubRoutePrefix(pathPrefix string)
 	Get(path string, handler http.HandlerFunc)
 	Put(path string, handler http.HandlerFunc)
 	Post(path string, handler http.HandlerFunc)
