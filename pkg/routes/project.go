@@ -8,9 +8,9 @@ import (
 var ProjectRoutes = func(routers types.RestRouters, services types.AllServices) {
 	projectController := controllers.NewProjectController(services)
 
-	routers.Get("/projects", projectController.GetProjects)
-	routers.Post("/projects", projectController.CreateProject)
-	routers.Get("/projects/{projectId}", projectController.GetProject)
-	routers.Put("/projects/{projectId}", projectController.UpdateProject)
-	routers.Delete("/projects/{projectId}", projectController.DeleteProjectById)
+	routers.Get("/projects", projectController.HandleGetAll)
+	routers.Post("/projects", projectController.HandleCreate)
+	routers.Put("/projects/{projectId}", projectController.HandleUpdate)
+	routers.Get("/projects/{projectId}", projectController.HandleGetById)
+	routers.Delete("/projects/{projectId}", projectController.HandleDeleteById)
 }

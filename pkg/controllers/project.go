@@ -9,8 +9,8 @@ import (
 	"profiler/pkg/types"
 	"profiler/pkg/types/dto"
 	"profiler/pkg/utils"
+	"profiler/pkg/utils/strings"
 	"strconv"
-	"strings"
 )
 
 type ProjectController struct {
@@ -18,7 +18,7 @@ type ProjectController struct {
 	services types.AllServices
 }
 
-func (pc ProjectController) GetProjects(w http.ResponseWriter, req *http.Request) {
+func (pc ProjectController) HandleGetAll(w http.ResponseWriter, req *http.Request) {
 	projects := pc.service.FindAll()
 	var projectsResponse []dto.ProjectResponse
 	for _, project := range projects {
@@ -29,7 +29,7 @@ func (pc ProjectController) GetProjects(w http.ResponseWriter, req *http.Request
 	writeJSONSuccessResponse(w, req, res, http.StatusOK)
 }
 
-func (pc ProjectController) DeleteProjectById(w http.ResponseWriter, r *http.Request) {
+func (pc ProjectController) HandleDeleteById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	projectId := params["projectId"]
@@ -52,7 +52,7 @@ func (pc ProjectController) DeleteProjectById(w http.ResponseWriter, r *http.Req
 	writeJSONSuccessResponse(w, r, res, http.StatusOK)
 }
 
-func (pc ProjectController) UpdateProject(w http.ResponseWriter, r *http.Request) {
+func (pc ProjectController) HandleUpdate(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	projectId := params["projectId"]
 	prjID, err := strconv.ParseInt(projectId, 0, 0)
@@ -76,7 +76,7 @@ func (pc ProjectController) UpdateProject(w http.ResponseWriter, r *http.Request
 	writeJSONSuccessResponse(w, r, res, http.StatusOK)
 }
 
-func (pc ProjectController) CreateProject(w http.ResponseWriter, r *http.Request) {
+func (pc ProjectController) HandleCreate(w http.ResponseWriter, r *http.Request) {
 	projectDO := models.NewProject()
 	projectDTO := &dto.ProjectReqDTO{}
 	utils.ParseBody(r, projectDTO)
@@ -90,7 +90,7 @@ func (pc ProjectController) CreateProject(w http.ResponseWriter, r *http.Request
 	writeJSONSuccessResponse(w, r, res, http.StatusCreated)
 }
 
-func (pc ProjectController) GetProject(w http.ResponseWriter, r *http.Request) {
+func (pc ProjectController) HandleGetById(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	projectId := params["projectId"]
 	id, err := strconv.ParseUint(projectId, 0, 0)
@@ -109,13 +109,13 @@ func (pc ProjectController) GetProject(w http.ResponseWriter, r *http.Request) {
 
 func (pc ProjectController) convertToProject(project models.Project) dto.ProjectResponse {
 	company, _ := pc.services.CompanyService.FindById(project.CompanyID)
-	company.Name = strings.Title(company.Name)
+	company.Name = strings.Capitalize(company.Name)
 
 	return dto.ProjectResponse{
 		ID:          project.ID,
 		Deleted:     project.Deleted,
 		Description: project.Description,
-		Name:        strings.Title(project.Name),
+		Name:        strings.Capitalize(project.Name),
 		Company: dto.CompanyResponse{
 			ID:          company.ID,
 			Name:        company.Name,
